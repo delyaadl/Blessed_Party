@@ -1,0 +1,283 @@
+﻿@page
+@model Blessed_Party.Pages.Admin.Master_UsersModel
+@{
+    ViewData["Title"] = "Master_Users";
+}
+
+<!-- Breadcrumbs -->
+<ol class="breadcrumb">
+    <li class="breadcrumb-item text-primary font-weight-bold">Master</li>
+    <li class="breadcrumb-item font-weight-bold">Users</li>
+</ol>
+
+<!-- Content -->
+<div class="card">
+    <div class="card-body">
+        <div class="card-title row">
+            <div class="col float-left">
+                <h1 class="bd-title montserrat font-weight-bold mb-2" id="content"> Master - Users</h1>
+            </div>
+            @*<div class="col float-right">
+                <button type="button" class="btn btn-primary float-lg-right text-white" data-toggle="modal" data-target="#ModalAddNew">Add New</button>
+            </div>*@
+        </div> <!-- card-title -->
+        <div class="row">
+            <div class="col">
+                <label class="text-danger">@TempData["Message"]</label>
+            </div>
+        </div>
+        <!--TABLE-->
+        <div class="table-responsive">
+            <table class="table table-bordered" id="tblUser">
+                <thead class="thead-light border-secondary">
+                    <tr>
+                        <th class="d-none">User ID</th>
+                        <th>Username</th>
+                        <th>Fullname</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Address</th>
+                        <th class="d-none">City</th>
+                        <th>City</th>
+                        <th class="d-none">Province</th>
+                        <th>Province</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.tbl_User)
+                    {
+                    <tr>
+                        <td class="d-none">@item.user_id</td>
+                        <td>@item.username</td>
+                        <td>@item.user_fullname</td>
+                        <td>@item.user_email</td>
+                        <td>@item.user_phone</td>
+                        <td>@item.user_address</td>
+                        <td class="d-none">@item.city_id</td>
+                        <td>
+                            @foreach (var x in Model.cityViewList)
+                            {
+                                if (item.city_id == x.city_id)
+                                {
+                                    <label>@x.city_name</label>
+                                }
+                            }
+                                            </td>
+                        <td class="d-none">@item.province_id</td>
+                        <td>
+                            @foreach (var x in Model.provinceViewList)
+                            {
+                                if (item.province_id == x.province_id)
+                                {
+                                    <label>@x.province</label>
+                                }
+                            }
+                        </td>
+                        <td>
+                            <button onclick='editTable(@Html.Raw(Json.Serialize(item)));' type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalEdit">Edit</button>
+                            <button onclick="deleteTable('@item.user_id'); return false;" type="button" class="btn btn-danger" data-toggle="modal" data-target="#ModalDelete"><i class="fas fa-trash-alt"></i></button>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div> <!-- table -->
+        <!--MODAL-->
+        <!--MODAL Add New-->
+        @*<div class="modal fade" id="ModalAddNew" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-md" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add New</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" id="modal-add" asp-page-handler="Add" enctype="multipart/form-data">
+                            <div class="mt-3">
+                                <label>Username <span style="color:red">*</span></label>
+                                <input class="form-control mr-2" type="text" id="" asp-for="tbl_User_Add.username" placeholder="Masukkan username..." required />
+                            </div>
+                            <div class="mt-3">
+                                <label>Fullname<span style="color:red">*</span></label>
+                                <input class="form-control mr-2" type="text" id="" asp-for="tbl_User_Add.user_fullname" placeholder="Masukkan Nama Lengkap..." required />
+                            </div>
+                            <div class="mt-3">
+                                <label>Password<span style="color:red">*</span></label>
+                                <input class="form-control mr-2" type="password" id="" asp-for="tbl_User_Add.userpass" placeholder="Masukkan Password..." required />
+                            </div>
+                            <div class="mt-3">
+                                <label>Phone <span style="color:red">*</span></label>
+                                <input class="form-control mr-2" type="number" id="" asp-for="tbl_User_Add.user_phone" placeholder="Masukkan No Telp..." required />
+                            </div>
+                            <div class="mt-3">
+                                <label>Email <span style="color:red">*</span></label>
+                                <input class="form-control mr-2" type="email" id="" asp-for="tbl_User_Add.user_email" placeholder="Masukkan Email..." required />
+                            </div>
+                            <div class="mt-3">
+                                <label>Address <span style="color:red">*</span></label>
+                                <input class="form-control mr-2" type="text" id="" asp-for="tbl_User_Add.user_address" placeholder="Masukkan Alamat Lengkap..." style="height: 100px; word-break:break-word" required />
+                            </div>
+                            <div class=" mt-3">
+                                <label class="text-secondary">City</label>
+                                <select class="form-control form-select" style="border-color:gainsboro;" id="" asp-for="tbl_User_Add.city_id">
+                                    @foreach (var item in Model.cityViewList)
+                                    {
+                                        <option value="@item.city_id">@item.city_name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class=" mt-3">
+                                <label class="text-secondary">Province</label>
+                                <select class="form-control form-select" style="border-color:gainsboro;" id="" asp-for="tbl_User_Add.province_id">
+                                    @foreach (var item in Model.provinceViewList)
+                                    {
+                                        <option value="@item.province_id">@item.province</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class=" mt-3">
+                                <label class="text-secondary">Admin</label>
+                                <select class="form-control form-select" style="border-color:gainsboro;" id="" asp-for="tbl_User_Add.flag_admin">
+                                    <option value="Y">Y</option>
+                                    <option value="N">N</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-secondary text-white" data-dismiss="modal" aria-label="Cancel">Cancel</a>
+                        <input type="submit" form="modal-add" value="Add" class="btn btn-primary text-white" />
+                    </div>
+                </div>
+            </div>
+            
+        </div>*@ <!--MODAL Add New-->
+        <!--MODAL Edit-->
+        <div class="modal fade" id="ModalEdit" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-md" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" id="modal-edit" asp-page-handler="Edit" enctype="multipart/form-data">
+                            <div>
+                                <input type="hidden" id="hdnUserId" asp-for="tbl_User_Edit.user_id" />
+                            </div>
+                            <div class="mt-3">
+                                <label>Username <span style="color:red">*</span></label>
+                                <input class="form-control mr-2" type="text" id="usernameEdit" asp-for="tbl_User_Edit.username" placeholder="Masukkan username..." required />
+                            </div>
+                            <div class="mt-3">
+                                <label>Fullname<span style="color:red">*</span></label>
+                                <input class="form-control mr-2" type="text" id="fullnameEdit" asp-for="tbl_User_Edit.user_fullname" placeholder="Masukkan Nama Lengkap..." required />
+                            </div>
+                            <div class="mt-3">
+                                <label>Phone <span style="color:red">*</span></label>
+                                <input class="form-control mr-2" type="number" id="phoneEdit" asp-for="tbl_User_Edit.user_phone" placeholder="Masukkan No Telp..." required />
+                            </div>
+                            <div class="mt-3">
+                                <label>Email <span style="color:red">*</span></label>
+                                <input class="form-control mr-2" type="email" id="emailEdit" asp-for="tbl_User_Edit.user_email" placeholder="Masukkan Email..." required />
+                            </div>
+                            <div class="mt-3">
+                                <label>Address <span style="color:red">*</span></label>
+                                <textarea class="form-control mr-2" type="text" id="addressEdit" asp-for="tbl_User_Edit.user_address" placeholder="Masukkan Alamat Lengkap..." style="height: 100px; word-break:break-word" required></textarea>
+                            </div>
+                            <div class=" mt-3">
+                                <label class="text-secondary">City <span style="color:red">*</span></label>
+                                <select class="form-control form-select" style="border-color:gainsboro;" id="cityEdit" asp-for="tbl_User_Edit.city_id">
+                                    @foreach (var item in Model.cityViewList)
+                                    {
+                                        <option value="@item.city_id">@item.city_name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class=" mt-3">
+                                <label class="text-secondary">Province <span style="color:red">*</span></label>
+                                <select class="form-control form-select" style="border-color:gainsboro;" id="provinceEdit" asp-for="tbl_User_Edit.province_id">
+                                    @foreach (var item in Model.provinceViewList)
+                                    {
+                                        <option value="@item.province_id">@item.province</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class=" mt-3">
+                                <label class="text-secondary">Admin? <span style="color:red">*</span></label>
+                                <select class="form-control form-select" style="border-color:gainsboro;" id="adminEdit" asp-for="tbl_User_Edit.flag_admin">
+                                    <option value="Y">Yes</option>
+                                    <option value="N">No</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-secondary text-white" data-dismiss="modal" aria-label="Cancel">Cancel</a>
+                        <input type="submit" form="modal-edit" value="Edit" class="btn btn-primary text-white" />
+                    </div>
+                </div>
+            </div>
+        </div> <!--MODAL Edit-->
+        <!--MODAL Delete-->
+        <div class="modal fade" id="ModalDelete" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-md" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Delete</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div>
+                            <form method="post" id="modal-delete" asp-page-handler="Delete">
+                                <input type="hidden" name="user_id" id="hdnUserIdDelete" />
+                                <label>Apakah Anda yakin untuk menghapus data ini ?</label>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-secondary text-white" data-dismiss="modal" aria-label="Cancel">Cancel</a>
+                        <input type="submit" form="modal-delete" value="Delete" class="btn btn-primary text-white" />
+                    </div>
+                </div>
+            </div>
+        </div> <!-- modal delete -->
+
+    </div> <!-- card-body -->
+</div> <!-- card -->
+
+<script>
+    var table;
+
+    $(function () {
+        table = $("#tblUser").DataTable();
+    });
+
+    function editTable(item_row) {
+        console.log(item_row);
+        $("#hdnUserId").val(item_row["user_id"]);
+        $("#usernameEdit").val(item_row["username"]);
+        $("#fullnameEdit").val(item_row["user_fullname"]);
+        $("#emailEdit").val(item_row["user_email"]);
+        $("#phoneEdit").val(item_row["user_phone"]);
+        $("#addressEdit").val(item_row["user_address"]);
+        $("#cityEdit").val(item_row["city_id"]);
+        $("#provinceEdit").val(item_row["province_id"]);
+        $("#adminEdit").val(item_row["flag_admin"]);
+        $("#passEdit").val(item_row["userpass"]);
+
+    }
+
+    function deleteTable(kode) {
+        $("#hdnUserIdDelete").val(kode);
+        console.log($("#hdnUserIdDelete").val());
+    }
+   
+</script>

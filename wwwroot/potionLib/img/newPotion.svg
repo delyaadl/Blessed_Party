@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="148" height="169" viewBox="0 0 148 169">
+  <defs>
+    <filter id="tutup" x="37.001" y="0" width="74" height="61" filterUnits="userSpaceOnUse">
+      <feOffset dy="9" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feFlood flood-opacity="0.161"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <filter id="Subtraction_18" x="0" y="5.131" width="148" height="163.869" filterUnits="userSpaceOnUse">
+      <feOffset dy="8" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="8" result="blur-2"/>
+      <feFlood flood-opacity="0.161"/>
+      <feComposite operator="in" in2="blur-2"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <clipPath id="clip-path">
+      <circle id="Ellipse_7" data-name="Ellipse 7" cx="35" cy="35" r="35" transform="translate(361 1916)" fill="#fff" stroke="#707070" stroke-width="1"/>
+    </clipPath>
+  </defs>
+  <g id="newPotion" transform="translate(-543.999 -464)">
+    <g transform="matrix(1, 0, 0, 1, 544, 464)" filter="url(#tutup)">
+      <rect id="tutup-2" data-name="tutup" width="26" height="13" rx="6.5" transform="translate(61 15)" fill="#fff"/>
+    </g>
+    <g transform="matrix(1, 0, 0, 1, 544, 464)" filter="url(#Subtraction_18)">
+      <path id="Subtraction_18-2" data-name="Subtraction 18" d="M-4546-135a49.692,49.692,0,0,1-19.463-3.929,49.839,49.839,0,0,1-15.894-10.715,49.838,49.838,0,0,1-10.716-15.893A49.689,49.689,0,0,1-4596-185a49.932,49.932,0,0,1,2.616-16,49.8,49.8,0,0,1,7.277-13.858,50.207,50.207,0,0,1,11.081-10.855A49.752,49.752,0,0,1-4561-232.711v-1.3a8.5,8.5,0,0,1-8-8.486,8.484,8.484,0,0,1,7.007-8.369c0,.126-.007.246-.007.369a9.511,9.511,0,0,0,9.5,9.5h13a9.511,9.511,0,0,0,9.5-9.5c0-.123,0-.247-.007-.369A8.483,8.483,0,0,1-4523-242.5a8.5,8.5,0,0,1-8,8.486v1.3a49.753,49.753,0,0,1,14.026,6.995,50.205,50.205,0,0,1,11.081,10.855A49.8,49.8,0,0,1-4498.617-201,49.932,49.932,0,0,1-4496-185a49.681,49.681,0,0,1-3.929,19.462,49.821,49.821,0,0,1-10.715,15.893,49.832,49.832,0,0,1-15.892,10.715A49.685,49.685,0,0,1-4546-135Z" transform="translate(4620 272)" fill="#fff"/>
+    </g>
+    <g id="air" transform="translate(583 516)">
+      <g id="Front" transform="translate(-361 -1916)" clip-path="url(#clip-path)">
+        <g id="Group_106" data-name="Group 106" transform="translate(-73)">
+          <path id="Union_2" data-name="Union 2" d="M-3747,1474.089v-64.771s8.186,14.55,20.616,11.587,19.311-12.255,31.449-15.869,21.935,4.282,21.935,4.282v64.771Zm-74,0v-64.771s12.178,16.061,24.61,13.1,18.019-12.631,30.156-16.246,19.234,3.148,19.234,3.148v64.771Z" transform="translate(4180.725 545.943)" fill="#0b8d45"/>
+        </g>
+      </g>
+      <g id="tree" transform="translate(-580 -514)">
+        <path id="Path_90" data-name="Path 90" d="M5439.14,527s-1.138,7.925-4.729,10.684-11.559,2.627-11.559,2.627.263-6.349,3.853-9.107S5439.14,527,5439.14,527Z" transform="translate(-4808 3)" fill="#0b8d45"/>
+        <path id="Union_6" data-name="Union 6" d="M-4819,20h-3a38.629,38.629,0,0,0,2.215-9.121c.554-5,.571-10.879.571-10.879h1.644s.017,5.878.571,10.879A38.7,38.7,0,0,0-4814.786,20Z" transform="translate(5433.785 543)" fill="#0b8d45"/>
+        <path id="Path_89" data-name="Path 89" d="M5422.852,527s1.138,7.925,4.729,10.684,11.559,2.627,11.559,2.627-.263-6.349-3.853-9.107S5422.852,527,5422.852,527Z" transform="translate(-4823 3)" fill="#24b24c"/>
+      </g>
+      <g id="tree_yellow" data-name="tree yellow" transform="translate(-580 -514)" opacity="0.2">
+        <path id="Union_7" data-name="Union 7" d="M-4810.068,31h-3a38.645,38.645,0,0,0,2.215-9.121c.484-4.364.558-9.4.568-10.607-2.507-.115-7.391-.6-9.987-2.594C-4823.861,5.925-4825-2-4825-2s8.845,1.446,12.435,4.2a10.159,10.159,0,0,1,3.209,5.354,10.159,10.159,0,0,1,3.209-5.354c3.59-2.758,12.435-4.2,12.435-4.2s-1.139,7.925-4.729,10.684c-2.669,2.051-7.76,2.5-10.195,2.6.011,1.227.086,6.244.569,10.6A38.645,38.645,0,0,0-4805.853,31Z" transform="translate(5424.852 531.995)" fill="#fbcc04"/>
+      </g>
+      <g id="Back" transform="translate(-361 -1916)" clip-path="url(#clip-path)">
+        <g id="Group_107" data-name="Group 107" transform="translate(356.724 1945.943)">
+          <path id="Union_1" data-name="Union 1" d="M-4176.725-471.083h-74v-66.044a27.776,27.776,0,0,1,21.386-2.057c12.138,3.686,10.792,8.656,23.222,11.678s29.392-9.622,29.392-9.622a26.445,26.445,0,0,1,21.484-2.826c12.138,3.684,19.019,11.23,31.449,14.254s21.067-11.428,21.067-11.428v66.044Z" transform="translate(4250.725 545.943)" fill="#24b24c"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

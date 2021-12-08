@@ -1,0 +1,296 @@
+﻿@page
+@model Blessed_Party.Pages.CartModel
+@using System.Globalization;
+@{
+    ViewData["Title"] = "Cart";
+}
+
+<style>
+    input[type="number"] {
+        -webkit-appearance: textfield;
+        -moz-appearance: textfield;
+        appearance: textfield;
+    }
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+    }
+
+    .number-input {
+        border: 2px solid #ddd;
+        display: inline-flex;
+    }
+
+        .number-input,
+        .number-input * {
+            box-sizing: border-box;
+        }
+
+            .number-input button {
+                outline: none;
+                -webkit-appearance: none;
+                background-color: transparent;
+                border: none;
+                align-items: center;
+                justify-content: center;
+                width: 3rem;
+                height: 3rem;
+                cursor: pointer;
+                margin: 0;
+                position: relative;
+            }
+
+                .number-input button:before,
+                .number-input button:after {
+                    display: inline-block;
+                    position: absolute;
+                    content: '';
+                    width: 1rem;
+                    height: 2px;
+                    background-color: #212121;
+                    transform: translate(-50%, -50%);
+                }
+
+                .number-input button.plus:after {
+                    transform: translate(-50%, -50%) rotate(90deg);
+                }
+
+            .number-input input[type=number] {
+                font-family: sans-serif;
+                max-width: 5rem;
+                padding: .5rem;
+                border: solid #ddd;
+                border-width: 0 2px;
+                font-size: 2rem;
+                height: 3rem;
+                font-weight: bold;
+                text-align: center;
+            }
+</style>
+
+<!-- Breadcrumbs -->
+<ol class="breadcrumb">
+    <li class="breadcrumb-item text-primary font-weight-bold">Home</li>
+    <li class="breadcrumb-item font-weight-bold">Cart</li>
+</ol>
+
+<!-- Content -->
+<div class="">
+    <div class="card-body pt-0">
+        <div class="card-title row">
+        </div>
+
+        <div class="row p-0">
+            <div class="col p-0 mb-1 text-danger">@TempData["Message"]</div>
+        </div>
+        <!-- table -->
+
+        <div class="row mb-4 pt-2" style="border: 1px solid #ebebeb; background-color: #ebebeb; ">
+            <div class="col-sm-1">
+                <input class="form-check-input ml-1" id="checkHeader" type="checkbox" value="" onclick="check_uncheck_checkbox(this.checked, 'checkChanges','hdnCartIdMultiple');" />
+            </div>
+            <div class="col-sm-6">
+                <label>Produk</label>
+            </div>
+            <div class="col-sm-3">
+                <label>Banyaknya</label>
+            </div>
+            <div class="col-sm-1">
+                <label>Harga Satuan</label>
+            </div>
+            <div class="col-sm-1">
+                <label>Total</label>
+            </div>
+        </div>
+
+        @{ decimal total = 0; }
+        @{ decimal total_all = 0; }
+        @{ int yy = 1; }
+        @foreach (var item in Model.tbl_cart)
+        {
+            <div class="row mb-3 pb-3" style="vertical-align:middle; border-bottom: 1px solid #ebebeb">
+                <div class="col-sm-1">
+                    <input class="form-check-input ml-1 checkChanges" type="checkbox" value="@item.cart_id" onchange="checkBoxApproval(this,'hdnCartIdMultiple','@item.cart_id');" />
+
+                </div>
+                <div class="col-sm-1">
+                    @foreach (var x in Model.tbl_Product)
+                    {
+                        if (item.product_id == x.product_id)
+                        {
+                            <div style="width:80px; height:80px; overflow:hidden">
+                                <img src="@string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(x.product_image))" style="width:80px" />
+                            </div>
+                        }
+                    }
+                </div>
+                <div class="col-sm-5">
+                    @foreach (var x in Model.tbl_Product)
+                    {
+                        if (item.product_id == x.product_id)
+                        {
+                            <label>@x.product_name</label>
+                        }
+                    }
+                </div>
+                <div class="col-sm-3">
+                    <div class="row">
+                        <div class="col-sm-5">
+                            <div class="number-input">
+                                <button style="height: 30px; width: 30px; font-size: 12pt; background-color: #ebebeb" onclick="this.parentNode.querySelector('input[type=number]').stepDown(); reCalculate($(this).next().val(), $('#total_@yy'), $('#price_@yy'));"></button>
+                                <input style="height: 30px; width: 30px; font-weight:normal; font-size:12pt;" class="quantity" min="0" name="quantity" id="quantity_@yy" value="@item.quantity" type="number">
+                                <button style="height: 30px; width: 30px; font-size: 12pt; background-color: #ebebeb " onclick="this.parentNode.querySelector('input[type=number]').stepUp(); reCalculate($('#quantity_@yy').val(), $('#total_@yy'), $('#price_@yy'));" class="plus"></button>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <button style="height: 30px; width: 30px; text-align:center; vertical-align:middle; " onclick="deleteTable('@item.cart_id'); return false;" type="button" class="p-0 mt-1 btn btn-danger text-center"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-1 text-right">
+                    @foreach (var x in Model.tbl_Product)
+                    {
+                        if (item.product_id == x.product_id)
+                        {
+                            <label class="d-none" id="price_@yy">@x.price</label>
+                            <label>Rp @x.price.ToString("N2", CultureInfo.CreateSpecificCulture("en-US"))</label>
+                        }
+                    }
+                </div>
+                <div class="col-sm-1 text-right">
+                    @foreach (var x in Model.tbl_Product)
+                    {
+                        if (item.product_id == x.product_id)
+                        {
+                            total = x.price * item.quantity;
+                            total_all = total_all + (x.price * item.quantity);
+                            break;
+                        }
+                    }
+                    <label id="total_@yy">Rp @total.ToString("N2", CultureInfo.CreateSpecificCulture("en-US"))</label>
+                    @{ total = 0;}
+                </div>
+            </div>
+            yy++;
+        }
+        @*<div class=" row m-2">
+                <div class="col-sm-10 float-left">
+
+                </div>
+                <div class="col-sm-2 float-right">
+                    <div class="row">
+                        <div class="col">
+                            <label>TOTAL</label>
+                        </div>
+                        <div class="col text-right">
+                            @total_all
+                        </div>
+                    </div>
+                </div>
+            </div>*@
+        <div class=" row mt-1">
+            <div class="col-sm-11 float-left">
+
+            </div>
+            <div class="col-sm-1 p-0 float-right text-right">
+                @if (Model.tbl_cart.Count <= 0)
+                {
+                    <input form="checkout-form" type="submit" value="CHECKOUT" class="btn btn-success" disabled />
+                }
+                else
+                {
+                    <input form="checkout-form" type="submit" value="CHECKOUT" class="btn btn-success" />
+                }
+                <form class="d-none" id="checkout-form" asp-page-handler="Checkout" method="post">
+                    <input type="hidden" id="hdnCartIdMultiple" name="hdnCartId" />
+                </form>
+            </div>
+        </div>
+
+        <form class="d-none" asp-page-handler="Delete" id="form-delete">
+            <input type="hidden" id="cart_id_delete" name="cart_id_delete" />
+            <input type="submit" id="btnDelete" value="Delete" />
+        </form>
+    </div> <!-- card-body -->
+</div> <!-- card -->
+
+<script>
+    var table;
+
+    $(function () {
+        table = $("#tblCart").DataTable();
+    });
+
+    let xx = 0;
+    function checkBoxApproval(checkbox_approval, id_hidden, cart_id) {
+        let checked_seqid = $("#" + id_hidden).val();
+        let checked_all = false;
+        if (checkbox_approval.checked) {
+            checked_all = true;
+            var nodesSameClass = document.getElementsByClassName("checkChanges");
+            console.log("length " + nodesSameClass.length);
+            xx = xx + 1;
+            console.log("xx " + xx);
+            if (xx == nodesSameClass.length){
+                $("#checkHeader").prop("checked", true);
+            }
+            if (checked_seqid == "") {
+                checked_seqid = cart_id;
+            } else {
+                checked_seqid = checked_seqid + "," + cart_id;
+            }
+            $("#" + id_hidden).val(checked_seqid);
+        } else {
+            $("#checkHeader").prop("checked", false);
+            checked_all = false;
+            xx = xx - 1;
+            let arr = checked_seqid.split(",");
+            arr = arr.filter(e => e !== cart_id); // filter ambil yang checked
+            $("#" + id_hidden).val(arr.join());
+            
+        }
+        console.log($("#" + id_hidden).val());
+    }
+
+    function check_uncheck_checkbox(isChecked, class_checkbox, id_hidden) {
+
+        $("#" + id_hidden).val("");
+        var checked_seqid = $("#" + id_hidden).val();
+        if (isChecked) {
+            console.log("true");
+            $('.' + class_checkbox).each(function () {
+                console.log("checked");
+                this.checked = true;
+                if (checked_seqid == "") {
+                    checked_seqid = $(this).val();
+                } else {
+                    checked_seqid = checked_seqid + "," + $(this).val();
+                }
+                $("#" + id_hidden).val(checked_seqid);
+
+                console.log($("#" + id_hidden).val());
+            });
+        } else {
+            $('.' + class_checkbox).each(function () {
+                this.checked = false;
+                checked_seqid = "";
+                $("#" + id_hidden).val(checked_seqid);
+                console.log($("#" + id_hidden).val());
+            });
+        }
+    }
+
+    function reCalculate(quantity, total, price) {
+        console.log("q " + quantity);
+        console.log(total.text());
+        console.log(price.text());
+        var newTotal = quantity * price.text();
+        total.text("Rp " + Intl.NumberFormat('en-US', { minimumFractionDigits: 2 }).format(newTotal));
+    }
+
+    function deleteTable(cart_id) {
+        $("#cart_id_delete").val(cart_id);
+        $("#btnDelete").trigger("click");
+    }
+</script>

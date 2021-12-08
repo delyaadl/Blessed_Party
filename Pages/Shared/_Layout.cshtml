@@ -1,0 +1,215 @@
+﻿@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor;
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blessed Party - @ViewData["Title"]</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="~/potionLib/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+
+    <!-- Custom styles for this template-->
+    <link href="~/potionLib/css/potion-bs.css" rel="stylesheet">
+    <link href="~/potionLib/css/potion-custom.css" rel="stylesheet">
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="~/potionLib/vendor/jquery/jquery.min.js"></script>
+    <script src="~/potionLib/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="~/potionLib/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="~/potionLib/js/sb-admin.min.js"></script>
+    <script src="~/potionLib/js/docs.min.js"></script>
+    <script src="~/potionLib/js/main.js"></script>
+    <script src="~/potionLib/js/popovers.js"></script>
+    <script src="~/potionLib/js/tooltips.js"></script>
+    <script src="~/potionLib/js/potion-custom.js"></script>
+
+    <!-- DataTables-->
+    <link rel="stylesheet" type="text/css" href="~/potionLib/vendor/data_tables/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="~/potionLib/vendor/data_tables/jquery.dataTables.js"></script>
+
+    <!-- Select2 (ONLINE)-->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="~/css/select2potion.css">
+
+</head>
+<body id="page-top">
+    <nav class="navbar navbar-expand navbar-dark bg-epm-pink01 static-top">
+        <div class="navbar-brand mr-1 align-middle">
+            <img src="~/images/bp_logo.jpg" height="40px" class="mr-2 align-middle" />
+            <span class="text-white" style="vertical-align: middle;">Blessed Party</span>
+        </div>
+
+        <!-- Navbar -->
+        <ul class="navbar-nav ml-auto ml-md-12">
+            <li class="nav-item dropdown no-arrow">
+                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-user-circle fa-fw"></i> <asp:Label ID="usernameLabel" runat="server">@HttpContextAccessor.HttpContext.User.FindFirst("sUsername")?.Value</asp:Label>
+                    <input type="hidden" id="hdnUserID" value="@HttpContextAccessor.HttpContext.User.FindFirst("sUsername")?.Value" />
+                </a>
+                @if(@HttpContextAccessor.HttpContext.User.FindFirst("sUsername")?.Value != null && @HttpContextAccessor.HttpContext.User.FindFirst("sUsername")?.Value != "")
+                {
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                    <a class="dropdown-item" href="~/ProfileSettings">Profile Settings</a>
+                    <a class="dropdown-item" href="~/Logout">Logout</a>
+                </div>
+                }
+                else
+                {
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                    <a class="dropdown-item" href="~/Register">Register</a>
+                    <a class="dropdown-item" href="~/Login">Login</a>
+                </div>
+                }
+            </li>
+        </ul>
+    </nav>
+
+
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        <ul class="sidebar navbar-nav bg-epm-pink02">
+            <li class="nav-item" runat="server">
+                <a class="nav-link" href="~/Index">
+                    <i class="fas fa-fw fa-home"></i>
+                    <span>Home</span>
+                </a>
+            </li>
+            @if(@HttpContextAccessor.HttpContext.User.FindFirst("fAdmin")?.Value == "Y")
+            {
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-fw fa-folder"></i>
+                    <span>Admin Menu</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-cust bg-epm-pink02 text-white rounded" aria-labelledby="pagesDropdown" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(5px, 56px, 0px);">
+                    <a class="dropdown-item-cust" href="~/Admin/SalesDashboard"><i class="fas fa-chart-line"></i>Dashboard</a>
+                    <a class="dropdown-item-cust" href="~/Admin/Master_Users"><i class="fas fa-fw fa-user"></i>User</a>
+                    <a class="dropdown-item-cust" href="~/Admin/Master_Categories"><i class="fas fa-fw fa-cube"></i>Category</a>
+                    <a class="dropdown-item-cust" href="~/Admin/Master_Products"><i class="fas fa-fw fa-cubes"></i>Product</a>
+                    <a class="dropdown-item-cust" href="~/Admin/Master_RatingProducts"><i class="far fa-fw fa-star"></i>Rating</a>
+                    <a class="dropdown-item-cust" href="~/Admin/Master_Shipments"><i class="fas fa-fw fa-car"></i>Shipment</a>
+                    <a class="dropdown-item-cust" href="~/Admin/Master_Orders"><i class="fas fa-fw fa-folder"></i>Order</a>
+                    <a class="dropdown-item-cust" href="~/Admin/Master_Reports"><i class="fas fa-fw fa-book"></i>Report</a>
+                </div>
+            </li>
+            }
+            <li class="nav-item" runat="server">
+                <a class="nav-link" href="~/Cart">
+                    <i class="fas fa-fw fa-shopping-cart"></i>
+                    <span>Shopping Cart</span>
+                </a>
+            </li>
+            <li class="nav-item" runat="server">
+                <a class="nav-link" href="~/HistoryOrder">
+                    <i class="fas fa-fw fa-history"></i>
+                    <span>Order History</span>
+                </a>
+            </li>
+        </ul>
+
+        <div id="loadingScreen" style="position: fixed; width: 100%; height: 100vh; background-color: white; top: 0; z-index: 100;">
+            <div style="display: block; margin: auto; text-align: center; height: 100vh; padding-top: 200px; padding-bottom: 200px;">
+                <div id="epm_loading" style="width: 200px; margin: auto;"></div>
+            </div>
+        </div>
+
+        <div id="content-wrapper">
+
+            <div class="container-fluid">
+                @RenderBody()
+            </div>
+            <!-- /.container-fluid -->
+            <!-- Sticky Footer -->
+            <footer class="sticky-footer" style="z-index: 0;">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright ©<span id="copyrightYear"></span><b> Blessed Party</b></span>
+                    </div>
+                </div>
+            </footer>
+        </div>
+        <!-- /.content-wrapper -->
+    </div>
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="#">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart JS -->
+    <script src="~/potionLib/vendor/chart.js/Chart.min.js"></script>
+    <script src="~/potionLib/js/demo/chart-bar-demo.js"></script>
+
+    <!-- Lottie Animation -->
+    <script src="~/potionLib/js/bodymovin.js"></script>
+    <script src="~/potionLib/js/epm_loading.js"></script>
+
+    <script>
+        $(function () {
+            var username = $("#hdnUserID").val();
+            console.log("hellooo " + username);
+            $.ajax({
+                type: "POST",
+                url: "/api/Layout/getDashboardList",
+                data: '{username : "' + username + '"}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    console.log(response.result);
+                    $(response.result).each(function () {
+                        $("#Div1").append(
+                            '<a href="/~/DashboardList/' + this.dept_name + '" class="dropdown-item-cust"><i class="fas fa-fw fa-file"></i>' + this.dept_name + '</a>');
+                    });
+                },
+                error: function (response) { console.log(response); }
+            });
+        });
+
+        function btnLogin(username, userpass) {
+            $.ajax({
+                type: "POST",
+                url: "/api/Layout/Login",
+                data: '{username: "' + username + '", userpass: "' + userpass + '"}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    console.log(response.result);
+                    $(response.result).each(function () {
+                    });
+                },
+                error: function (response) { console.log(response); }
+            });
+        }
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

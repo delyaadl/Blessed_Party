@@ -1,0 +1,164 @@
+﻿@page
+@model Blessed_Party.Pages.Admin.Master_CategoriesModel
+@{
+    ViewData["Title"] = "Master_Category";
+}
+
+<!-- Breadcrumbs -->
+<ol class="breadcrumb">
+    <li class="breadcrumb-item text-primary font-weight-bold">Master</li>
+    <li class="breadcrumb-item font-weight-bold">Categories</li>
+</ol>
+
+<!-- Content -->
+<div class="card">
+    <div class="card-body">
+        <div class="card-title row">
+            <div class="col float-left">
+                <h1 class="bd-title montserrat font-weight-bold mb-2" id="content"> Master - Product Categories</h1>
+            </div>
+            <div class="col float-right">
+                <button type="button" class="btn btn-primary float-right text-white" data-toggle="modal" data-target="#ModalAddNew">Add New</button>
+            </div>
+        </div> <!-- card-title -->
+        <div class="row">
+            <div class="col">
+                <label class="text-danger">@TempData["Message"]</label>
+            </div>
+        </div>
+        <!--TABLE-->
+        <div class="table-responsive">
+            <table class="table table-bordered" id="tblCategory">
+                <thead class="thead-light border-secondary">
+                    <tr>
+                        <th class="d-none">category ID</th>
+                        <th>Category Name</th>
+                        <th>Created Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.tbl_Category)
+                    {
+                        <tr>
+                            <td class="d-none">@item.category_id</td>
+                            <td style="width:140px">@item.category_name</td>
+                            <td>@item.created_date</td>
+                            <td>
+                                <button onclick="editTable($(this).parent().parent()); return false;" type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalEdit">Edit</button>
+                                <button onclick="deleteTable('@item.category_id'); return false;" type="button" class="btn btn-danger" data-toggle="modal" data-target="#ModalDelete"><i class="fas fa-trash-alt"></i></button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div> <!-- table -->
+        <!--MODAL-->
+        <!--MODAL Add New-->
+        <div class="modal fade" id="ModalAddNew" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-md" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add New</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" id="modal-add" asp-page-handler="Add" enctype="multipart/form-data">
+                            <div class="">
+                                <label>Nama Kategori <span style="color:red">*</span></label>
+                                <input class="form-control mr-2" type="text" id="" asp-for="tbl_Category_Add.category_name" placeholder="Masukkan Nama Kategori..." required />
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-secondary text-white" data-dismiss="modal" aria-label="Cancel">Cancel</a>
+                        <input type="submit" form="modal-add" value="Add" class="btn btn-primary text-white" />
+                    </div>
+                </div>
+            </div>
+        </div> <!--MODAL Add New-->
+        <!--MODAL Edit-->
+        <div class="modal fade" id="ModalEdit" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-md" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" id="modal-edit" asp-page-handler="Edit" enctype="multipart/form-data">
+                            <input type="hidden" id="hdnCreatedAt" asp-for="tbl_Category_Edit.created_date" />
+                            <div>
+                                <input type="hidden" id="hdnCatId" asp-for="tbl_Category_Edit.category_id" />
+                            </div>
+                            <div class="">
+                                <label>Nama Kategori <span style="color:red">*</span></label>
+                                <input class="form-control mr-2" type="text" id="NameEdit" asp-for="tbl_Category_Edit.category_name" placeholder="Masukkan Nama Kategori..." required />
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-secondary text-white" data-dismiss="modal" aria-label="Cancel">Cancel</a>
+                        <input type="submit" form="modal-edit" value="Edit" class="btn btn-primary text-white" />
+                    </div>
+                </div>
+            </div>
+        </div> <!--MODAL Edit-->
+        <!--MODAL Delete-->
+        <div class="modal fade" id="ModalDelete" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-md" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Delete</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div>
+                            <form method="post" id="modal-delete" asp-page-handler="Delete">
+                                <input type="hidden" name="category_id" id="hdnCatIdDelete" />
+                                <label>Apakah Anda yakin untuk menghapus data ini ?</label>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-secondary text-white" data-dismiss="modal" aria-label="Cancel">Cancel</a>
+                        <input type="submit" form="modal-delete" value="Delete" class="btn btn-primary text-white" />
+                    </div>
+                </div>
+            </div>
+        </div> <!-- modal delete -->
+    </div> <!-- card-body -->
+</div> <!-- card -->
+
+<script>
+    var table;
+
+    $(function () {
+        table = $("#tblCategory").DataTable();
+    });
+
+    function editTable(tr_list) {
+        let data = table.row(tr_list).data();
+
+        console.log(data);
+
+        let id = data[0];
+        let nama = data[1];
+        let created_at = data[2];
+
+        $("#NameEdit").val(nama);
+        $("#hdnCreatedAt").val(created_at);
+        $("#hdnCatId").val(id);
+    }
+
+    function deleteTable(kode) {
+        $("#hdnCatIdDelete").val(kode);
+        console.log($("#hdnCatIdDelete").val());
+    }
+</script>

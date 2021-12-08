@@ -1,0 +1,104 @@
+﻿@page
+@model Blessed_Party.Pages.Admin.Master_ReportsModel
+@{
+    ViewData["Title"] = "Reports";
+}
+
+<!-- Breadcrumbs -->
+<ol class="breadcrumb">
+    <li class="breadcrumb-item text-primary font-weight-bold">Master</li>
+    <li class="breadcrumb-item font-weight-bold">Reports</li>
+</ol>
+
+<!-- Content -->
+<div class="card">
+    <div class="card-body">
+        <div class="card-title row">
+            <div class="col float-left">
+                <h1 class="bd-title montserrat font-weight-bold mb-2" id="content"> Master - Reports</h1>
+            </div>
+            @*<div class="col float-right">
+                    <button type="button" class="btn btn-primary float-lg-right text-white" data-toggle="modal" data-target="#ModalAddNew">Export Report</button>
+                </div>*@
+        </div> <!-- card-title -->
+        <div class="row">
+            <div class="col">
+                <label class="text-danger">@TempData["Message"]</label>
+            </div>
+        </div>
+        <!--TABLE-->
+        <div class="table-responsive">
+            <table class="table table-bordered" id="tblReport">
+                <thead class="thead-light border-secondary">
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Status Pesanan</th>
+                        <th>No. Resi</th>
+                        <th>Opsi Pengiriman</th>
+                        <th>Waktu Pesanan Dibuat</th>
+                        <th>Produk</th>
+                        <th>Total Berat</th>
+                        <th>Total Harga</th>
+                        <th>Catatan Pembeli</th>
+                        <th>Username (Pembeli)</th>
+                        <th>Nama Pembeli</th>
+                        <th>No. Telp</th>
+                        <th>Alamat Pengiriman</th>
+                        <th>Waktu Pesanan Selesai</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.reportsViewList)
+                    {
+                        <tr>
+                            <td>@item.order_id</td>
+                            <td>
+                                @if (item.order_status == "4")
+                                {
+                                    <label>Pesanan Dibatalkan</label>
+                                }
+                                else
+                                {
+                                    <label>Pesanan Selesai</label>
+                                }
+                            </td>
+                            <td>@item.shipment_awb</td>
+                            <td>@item.shipment_type</td>
+                            <td>@item.order_date</td>
+                            <td>@item.products</td>
+                            <td>@item.products_weight</td>
+                            <td>@item.total_price</td>
+                            <td>@item.order_note</td>
+                            <td>@item.username</td>
+                            <td>@item.user_fullname</td>
+                            <td>@item.phone</td>
+                            <td>@item.shipping_address</td>
+                            <td>@item.order_finish_date</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div> <!-- table -->
+    </div> <!-- card-body -->
+</div> <!-- card -->
+
+<link href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
+<link href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.dataTables.min.css">
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.3.1/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.3.1/js/buttons.html5.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.print.min.js"></script>
+<script>
+    var table;
+
+    $(function () {
+        table = $("#tblReport").DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                { extend: 'excel', className: 'btn btn-success m-0 mr-2' },
+            ]
+        });
+    });
+</script>

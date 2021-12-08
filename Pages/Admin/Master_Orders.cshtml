@@ -1,0 +1,255 @@
+﻿@page
+@model Blessed_Party.Pages.Admin.Master_OrdersModel
+@{
+    ViewData["Title"] = "Master_Orders";
+}
+
+<!-- Breadcrumbs -->
+<ol class="breadcrumb">
+    <li class="breadcrumb-item text-primary font-weight-bold">Master</li>
+    <li class="breadcrumb-item font-weight-bold">Orders</li>
+</ol>
+
+<!-- Content -->
+<div class="card">
+    <div class="card-body">
+        <div class="card-title row">
+            <div class="col float-left">
+                <h1 class="bd-title montserrat font-weight-bold mb-2" id="content"> Master - Orders</h1>
+            </div>
+            @*<div class="col-sm-3 float-right">
+                <form class="d-none" id="modal-download" asp-page-handler="Download"></form>
+                <div class="float-lg-right">
+                    <input type="submit" form="modal-download" class="btn btn-secondary text-white mr-1" value="Download Template" />
+                    <button type="button" class="btn btn-secondary text-white" data-toggle="modal" data-target="#ModalImport">Import Rating Data</button>
+                </div>
+            </div>*@
+        </div> <!-- card-title -->
+        <div class="row">
+            <div class="col">
+                <label class="text-danger">@TempData["Message"]</label>
+            </div>
+        </div>
+        <!--TABLE-->
+        <div class="table-responsive">
+            <table class="table table-bordered" id="tblProduct">
+                <thead class="thead-light border-secondary">
+                    <tr>
+                        <th class="d-none">Order ID</th>
+                        <th>Customer Name</th>
+                        <th>Total Amount</th>
+                        <th>Order Status</th>
+                        <th>Proof of Payment</th>
+                        <th>Order Note</th>
+                        <th>Shipping Address</th>
+                        <th>Order Created</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.tbl_Order)
+                    {
+                        <tr>
+                            <td class="d-none">@item.order_id</td>
+                            <td>
+                                @foreach (var x in Model.tbl_User)
+                                {
+                                    if (item.user_id == x.user_id)
+                                    {
+                                        <label>@x.user_fullname</label>
+                                        break;
+                                    }
+                                }
+                            </td>
+                            <td>@item.amount</td>
+                            <td>
+                                @if (item.order_status == "0")
+                                {
+                                    <label>Pesanan Dibuat</label>
+                                }
+                                else if (item.order_status == "1")
+                                {
+                                    <label>Pesanan Telah Dibayar</label>
+                                }
+                                else if (item.order_status == "2")
+                                {
+                                    <label>Pesanan Dikirim</label>
+                                }
+                                else if (item.order_status == "3")
+                                {
+                                    <label>Pesanan Diterima</label>
+                                }
+                                else if (item.order_status == "4")
+                                {
+                                    <label>Pesanan Selesai</label>
+                                }
+                                else if (item.order_status == "9")
+                                {
+                                    <label>Pesanan Dibatalkan</label>
+                                }
+                                else
+                                {
+                                    <label>Pesanan Dibuat</label>
+                                }
+                            </td>
+                            <td>
+                                @if (item.proof_of_payment != null)
+                                {
+                                    <button type="button" onclick="loadImage('@string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(item.proof_of_payment))');" class="btn btn-dark text-white" data-toggle="modal" data-target="#ModalImage">Load Proof</button>
+                                }
+                                else
+                                {
+                                    <label>Belum di-upload</label>
+                                }
+                            </td>
+                            <td>@item.order_note</td>
+                            <td>@item.shipping_address</td>
+                            <td>@item.order_date</td>
+                            <td>
+                                <button onclick='editTable(@Html.Raw(Json.Serialize(item)));' type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalEdit">Edit</button>
+                                <a href="@Url.Page("Order_Detail", new { order_id = item.order_id })" class="btn btn-secondary">Detail</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div> <!-- table -->
+        <!--MODAL-->
+        <!--MODAL Edit-->
+        <div class="modal fade" id="ModalEdit" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-md" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" id="modal-edit" asp-page-handler="Edit" enctype="multipart/form-data">
+                            <input type="hidden" id="hdnCreatedAt" asp-for="tbl_Order_Edit.order_date" />
+                            <input type="hidden" id="hdnOrderId" asp-for="tbl_Order_Edit.order_id" />
+                            <div class="">
+                                <label class="text-secondary">Status Pesanan</label>
+                                <select class="form-control form-select" style="border-color:gainsboro;" id="statusEdit" asp-for="tbl_Order_Edit.order_status">
+                                    <option value="0" disabled>Pesanan Dibuat</option>
+                                    <option value="1">Pesanan Dibayar</option>
+                                    <option value="2">Pesanan Dikirim</option>
+                                    <option value="3">Pesanan Diterima</option>
+                                    <option value="4">Pesanan Selesai</option>
+                                    <option value="9">Pesanan Dibatalkan</option>
+                                </select>
+                            </div>
+
+                            <div class="mt-3" id="resiDiv">
+                                <label>Nomor Resi</label>
+                                <input class="form-control mr-2" type="text" id="resiEdit" asp-for="shipment_Add.shipment_awb" placeholder="Masukkan Resi..." />
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-secondary text-white" data-dismiss="modal" aria-label="Cancel">Cancel</a>
+                        <input type="submit" form="modal-edit" value="Edit" class="btn btn-primary text-white" />
+                    </div>
+                </div>
+            </div>
+        </div> <!--MODAL Edit-->
+        <!--MODAL image-->
+        <div class="modal fade" id="ModalImage" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-md" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Image</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="text-center">
+                            <img id="prodImg" style="width:80%" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-secondary text-white" data-dismiss="modal" aria-label="Close">Close</a>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- modal image -->
+
+        <div class="modal fade" id="ModalImport" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-md" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Import Data</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="form-import" asp-page-handler="UploadFile" method="post" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col">
+                                    <input name="fileSelect" type="file" accept=".xlsx, .xls"/>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-secondary text-white" data-dismiss="modal" aria-label="Close">Close</a>
+                        <input type="submit" form="form-import" value="Import" class="btn btn-success text-white" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div> <!-- card-body -->
+</div> <!-- card -->
+
+<script>
+    var table;
+    var tbl_Shipment = @Html.Raw(Json.Serialize(Model.tbl_Shipment));
+
+    $(function () {
+        table = $("#tblProduct").DataTable();
+        
+    });
+
+    function editTable(item_row) {
+        console.log(item_row);
+        $("#hdnOrderId").val(item_row["order_id"]);
+        $("#hdnCreatedAt").val(item_row["order_date"]);
+        $("#statusEdit").val(item_row["order_status"]);
+
+        var order_status = item_row["order_status"];
+        var proof = item_row["proof_of_payment"];
+
+        $(tbl_Shipment).each(function () {
+            console.log(this.order_id);
+            if (this.order_id == item_row["order_id"]) {
+                $("#resiEdit").val(this.shipment_awb);
+            }
+        });
+    }
+
+    function deleteTable(kode) {
+        $("#hdnProdIdDelete").val(kode);
+        console.log($("#hdnProdIdDelete").val());
+    }
+
+    function Pressed() {
+        var a = document.getElementById('FotoProduk');
+        if (a.value == "") {
+            fileLabel.innerHTML = "No File Chosen";
+        }
+        else {
+            var theSplit = a.value.split('\\');
+            fileLabel.innerHTML = theSplit[theSplit.length - 1];
+        }
+    }
+
+    function loadImage(src) {
+        console.log(src);
+        $("#prodImg").attr("src", src);
+    }
+</script>
+

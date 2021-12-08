@@ -1,0 +1,58 @@
+﻿@page
+@model Blessed_Party.Pages.LoginModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<style>
+    #login-container {
+        margin: auto;
+        width: 500px;
+    }
+
+    .register-text {
+        color: hotpink;
+    }
+
+    .register-text:hover {
+        color : deeppink;
+    }
+</style>
+
+<div id="login-container">
+    <div class="align-items-center mb-3" style="margin:auto">
+        <img src="~/images/bp_logo.jpg" class="mb-3 mt-3" style="display:block; margin:auto; width:70px"/>
+    </div>
+    <form id="login-page" asp-page-handler="Login" method="post">
+        <input type="hidden" name="returnUrl" value="@TempData["returnUrl"]" />
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" class="form-control" id="usernameLogin" asp-for="Input.username" placeholder="Username" required>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" asp-for="Input.password" class="form-control" id="userpassLogin" placeholder="Password" required>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <label style="color:red">@TempData["Message"]</label>
+            </div>
+        </div>
+        <div class="text-right">
+            <div class="mr-2" style="display:inline">
+                <label>Don't have account? <a href="Register" class="register-text" style="text-decoration:none;">Register Now</a></label>
+            </div>
+            <div style="display:inline">
+                <input type="submit" value="Login" class="btn btn-primary text-white" />
+            </div>
+        </div>
+    </form>
+</div>

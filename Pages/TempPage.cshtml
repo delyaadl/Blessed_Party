@@ -1,0 +1,77 @@
+﻿@page
+@model Blessed_Party.Pages.TempPageModel
+@{
+}
+
+<h2>Ürün Detayları</h2>
+
+<div>
+    <h4>Ürün</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>Butik</dt>
+
+        <dd>
+            TESTING 2
+            @*@Html.DisplayFor(model => model.BoutiqueId.Boutique_Description)*@
+        </dd>
+
+        <dt>Renk</dt>
+
+        <dd>
+            TESTING
+            @*@Html.DisplayFor(model => "Color")*@
+        </dd>
+
+        <dt>Beden</dt>
+
+        <dd>
+            @*@Html.DisplayFor(model => model.Size.Size_Name)*@
+        </dd>
+
+        <dt>
+            Alt Kategori
+        </dt>
+
+        <dd>
+            @*@Html.DisplayFor(model => model.SubCategory.SubCategory_Name)*@
+        </dd>
+
+        <dt>
+            Ürün
+        </dt>
+
+        <dd>
+            @*@Html.DisplayFor(model => model.Product_Description)*@
+        </dd>
+
+        <dt>
+            Stok
+        </dt>
+
+        <dd>
+            @*@Html.DisplayFor(model => model.Product_NumberInStock)*@
+        </dd>
+
+        <dt>
+            Fiyat
+        </dt>
+
+        <dd>
+            @*@Html.DisplayFor(model => model.Product_Cost)*@
+        </dd>
+
+        <dt>
+            Uyarı
+        </dt>
+
+        <dd>
+            @*@Html.DisplayFor(model => model.Product_Warning)*@
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @*@Html.ActionLink("Düzenle", "ProductEdit", new { id = Model.Product_Id }) |
+    @Html.ActionLink("Listeye Geri Dön", "ProductList")*@
+</p>

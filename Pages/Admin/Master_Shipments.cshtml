@@ -1,0 +1,65 @@
+﻿@page
+@model Blessed_Party.Pages.Admin.Master_ShipmentsModel
+@{
+    ViewData["Title"] = "Master_Shipments";
+}
+
+<!-- Breadcrumbs -->
+<ol class="breadcrumb">
+    <li class="breadcrumb-item text-primary font-weight-bold">Master</li>
+    <li class="breadcrumb-item font-weight-bold">Shipments</li>
+</ol>
+
+<!-- Content -->
+<div class="card">
+    <div class="card-body">
+        <div class="card-title row">
+            <div class="col float-left">
+                <h1 class="bd-title montserrat font-weight-bold mb-2" id="content"> Master - Shipments</h1>
+            </div>
+        </div> <!-- card-title -->
+        <div class="row">
+            <div class="col">
+                <label class="text-danger">@TempData["Message"]</label>
+            </div>
+        </div>
+        <!--TABLE-->
+        <div class="table-responsive">
+            <table class="table table-bordered" id="tblProduct">
+                <thead class="thead-light border-secondary">
+                    <tr>
+                        <th class="d-none">Shipment ID</th>
+                        <th>Order ID</th>
+                        <th>Shipping Type</th>
+                        <th>Shipping Cost</th>
+                        <th>Shipping Weight</th>
+                        <th>Shipping AWB</th>
+                        <th>Shipping Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.tbl_Shipment)
+                    {
+                        <tr>
+                            <td class="d-none">@item.shipment_id</td>
+                            <td>@item.order_id</td>
+                            <td>@item.shipment_type</td>
+                            <td>@item.shipment_cost</td>
+                            <td>@item.shipment_weight</td>
+                            <td>@item.shipment_awb</td>
+                            <td>@item.shipment_date</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div> <!-- table -->
+    </div> <!-- card-body -->
+</div> <!-- card -->
+
+<script>
+    var table;
+
+    $(function () {
+        table = $("#tblProduct").DataTable();
+    });
+</script>

@@ -1,0 +1,193 @@
+﻿@page
+@model Blessed_Party.Pages.Admin.SalesDashboardModel
+@{
+    var XLabels = Newtonsoft.Json.JsonConvert.SerializeObject(Model.SalesDashboard_tbl.Select(x => x.Product_Name).ToList());
+    var YValues = Newtonsoft.Json.JsonConvert.SerializeObject(Model.SalesDashboard_tbl.Select(x => x.Quantity).ToList());
+
+    var UserLabels = Newtonsoft.Json.JsonConvert.SerializeObject(Model.UserDashboard_tbl.Select(x => x.username).ToList());
+    var TOrder = Newtonsoft.Json.JsonConvert.SerializeObject(Model.UserDashboard_tbl.Select(x => x.Quantity).ToList());
+}
+
+<!-- Breadcrumbs -->
+<ol class="breadcrumb mb-4" style="margin:auto;">
+    <li class="breadcrumb-item font-weight-bold">
+        Home / Admin Dashboard
+    </li>
+</ol>
+
+<div class="card p-5 pt-2" style="margin: auto;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-6 text-center">
+                <h2>Top 10 @TempData["lastMonth"] Products' Sold</h2>
+            </div>
+            <div class="col-sm-6 text-center">
+                <h2>Top 10 @TempData["lastMonth"] Users' Orders</h2>
+            </div>
+        </div>
+        <div class="box-body">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="chart-container">
+                        <canvas id="chart" style="width:100%; height:500px"></canvas>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="chart-container">
+                        <canvas id="chart2" style="width:100%; height:500px"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+<script type="text/javascript">
+
+        $(function () {
+    var chartName = "chart";
+        var ctx = document.getElementById(chartName).getContext('2d');
+            var data = {
+                labels: @Html.Raw(XLabels),
+                datasets: [{
+                    label: "Top 10 Products Chart",
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(255, 0, 0)',
+                        'rgba(0, 255, 0)',
+                        'rgba(0, 0, 255)',
+                        'rgba(192, 192, 192)',
+                        'rgba(255, 255, 0)',
+                        'rgba(255, 0, 255)'
+                    ],
+                    borderColor: [
+                        'rgba(255,99,132,1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(255, 0, 0)',
+                        'rgba(0, 255, 0)',
+                        'rgba(0, 0, 255)',
+                        'rgba(192, 192, 192)',
+                        'rgba(255, 255, 0)',
+                        'rgba(255, 0, 255)'
+                    ],
+                    borderWidth: 1,
+                    data: @Html.Raw(YValues)
+    }]
+            };
+
+var options = {
+                maintainAspectRatio: false,
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            min: 0,
+                            beginAtZero: true
+                        },
+                        gridLines: {
+                            display: true,
+                            color: "rgba(255,99,164,0.2)"
+                        }
+}],
+                    xAxes: [{
+                        ticks: {
+                            min: 0,
+                            beginAtZero: true
+                        },
+                        gridLines: {
+                            display: false
+                        }
+                    }]
+                }
+            };
+
+       var myChart = new  Chart(ctx, {
+                options: options,
+                data: data,
+                type:'bar'
+
+       });
+
+            var chartName2 = "chart2";
+        var ctx = document.getElementById(chartName2).getContext('2d');
+            var data = {
+                labels: @Html.Raw(UserLabels),
+                datasets: [{
+                    label: "Top 10 Users Chart",
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(255, 0, 0)',
+                        'rgba(0, 255, 0)',
+                        'rgba(0, 0, 255)',
+                        'rgba(192, 192, 192)',
+                        'rgba(255, 255, 0)',
+                        'rgba(255, 0, 255)'
+                    ],
+                    borderColor: [
+                        'rgba(255,99,132,1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(255, 0, 0)',
+                        'rgba(0, 255, 0)',
+                        'rgba(0, 0, 255)',
+                        'rgba(192, 192, 192)',
+                        'rgba(255, 255, 0)',
+                        'rgba(255, 0, 255)'
+                    ],
+                    borderWidth: 1,
+                    data: @Html.Raw(TOrder)
+    }]
+            };
+
+var options = {
+                maintainAspectRatio: false,
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            min: 0,
+                            beginAtZero: true
+                        },
+                        gridLines: {
+                            display: true,
+                            color: "rgba(255,99,164,0.2)"
+                        }
+}],
+                    xAxes: [{
+                        ticks: {
+                            min: 0,
+                            beginAtZero: true
+                        },
+                        gridLines: {
+                            display: false
+                        }
+                    }]
+                }
+            };
+
+       var myChart2 = new Chart(ctx, {
+                options: options,
+                data: data,
+                type:'bar'
+
+            });
+        });
+</script>  

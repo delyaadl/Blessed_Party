@@ -1,0 +1,308 @@
+﻿@page
+@model Blessed_Party.Pages.Admin.Master_ProductsModel
+@using System.Globalization; 
+@{
+    ViewData["Title"] = "Master_Products";
+}
+
+<!-- Breadcrumbs -->
+<ol class="breadcrumb">
+    <li class="breadcrumb-item text-primary font-weight-bold">Master</li>
+    <li class="breadcrumb-item font-weight-bold">Products</li>
+</ol>
+
+<!-- Content -->
+<div class="card">
+    <div class="card-body">
+        <div class="card-title row">
+            <div class="col float-left">
+                <h1 class="bd-title montserrat font-weight-bold mb-2" id="content"> Master - Products</h1>
+            </div>
+            <div class="col float-right">
+                <button type="button" class="btn btn-primary float-right text-white" data-toggle="modal" data-target="#ModalAddNew">Add New</button>
+            </div>
+        </div> <!-- card-title -->
+        <div class="row">
+            <div class="col">
+                <label class="text-danger">@TempData["Message"]</label>
+            </div>
+        </div>
+        <!--TABLE-->
+        <div class="table-responsive">
+            <table class="table table-bordered" id="tblProduct">
+                <thead class="thead-light border-secondary">
+                    <tr>
+                        <th class="d-none">Product ID</th>
+                        <th>Product Name</th>
+                        <th>Product Image</th>
+                        <th>Product Weight</th>
+                        <th>Price</th>
+                        <th>Available</th>
+                        <th>Description</th>
+                        <th>Created At</th>
+                        <th></th>
+                        <th class="d-none"></th>
+                        <th class="d-none"></th>
+                        <th class="d-none"></th>
+                        <th class="d-none"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.tbl_Product)
+                    {
+                    <tr>
+                        <td class="d-none">@item.product_id</td>
+                        <td style="width:140px">@item.product_name</td>
+                        <td><button type="button" onclick="loadImage('@string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(item.product_image))');" class="btn btn-dark text-white" data-toggle="modal" data-target="#ModalImage">Load Img</button></td>
+                        <td>@item.product_weight</td>
+                        <td>Rp @item.price.ToString("N2", CultureInfo.CreateSpecificCulture("en-US"))</td>
+                        <td>
+                            @{var xxflag = item.flag_available == "N" ? "Tidak Tersedia" : "Tersedia";}
+                            <label>@xxflag</label>
+                        </td>
+                        <td style="width:500px">@item.description</td>
+                        <td>@item.created_date</td>
+                        <td>
+                            <button onclick="editTable($(this).parent().parent()); return false;" type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalEdit">Edit</button>
+                            @*<button onclick="deleteTable('@item.product_id'); return false;" type="button" class="btn btn-danger" data-toggle="modal" data-target="#ModalDelete"><i class="fas fa-trash-alt"></i></button>*@
+                        </td>
+                        <td class="d-none">@item.product_image</td>
+                        <td class="d-none">@item.price</td>
+                        <td class="d-none">@item.category_id</td>
+                        <td class="d-none">@item.flag_available</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div> <!-- table -->
+        <!--MODAL-->
+        <!--MODAL Add New-->
+        <div class="modal fade" id="ModalAddNew" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-md" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add New</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" id="modal-add" asp-page-handler="Add" enctype="multipart/form-data">
+                            <div class="mt-3">
+                                <label>Nama Produk <span style="color:red">*</span></label>
+                                <input class="form-control mr-2" type="text" id="" asp-for="tbl_Product_Add.product_name" placeholder="Masukkan Nama Produk..." required />
+                            </div>
+                            <div class="mt-3">
+                                <label>Berat Produk <span style="color:red">*</span></label>
+                                <input class="form-control mr-2" type="number" id="" asp-for="tbl_Product_Add.product_weight" placeholder="Masukkan Berat Produk..." required />
+                            </div>
+                            <div class="mt-3">
+                                <label>Harga Produk <span style="color:red">*</span></label>
+                                <input class="form-control mr-2" type="number" id="" asp-for="tbl_Product_Add.price" placeholder="Masukkan Harga Produk..." required />
+                            </div>
+
+                            <div class="form-group mt-3">
+                                <label style="display:block">Gambar Produk <span style="color:red">*</span></label>
+                                <input class="form-control p-0" style="border:none; width:90px; color:transparent; display:inline" id="FotoProduk" type="file" name="FotoProduk" accept=".png,.jpg, .jpeg" onchange="Pressed()" required />
+                                <label style="display:inline;" id="fileLabel">No file chosen</label>
+                            </div>
+                            <div class="mt-3">
+                                <label>Kategori Produk <span style="color:red">*</span></label>
+                                <select class="form-control form-select" id="categoryAdd" asp-for="tbl_Product_Add.category_id" required>
+                                    @foreach (var item in Model.tbl_Category)
+                                    {
+                                        <option value="@item.category_id">@item.category_name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="mt-3">
+                                <label>Deskripsi Produk</label>
+                                <textarea class="form-control mr-2" type="text" id="" asp-for="tbl_Product_Add.description" placeholder="Masukkan Deskripsi Produk..." style="height: 100px; word-break:break-word"></textarea>
+                            </div>
+                            <div class=" mt-3">
+                                <label class="text-secondary">Tersedia</label>
+                                <select class="form-control form-select" style="border-color:gainsboro;" id="" asp-for="tbl_Product_Add.flag_available">
+                                    <option value="Y">Tersedia</option>
+                                    <option value="N">Habis</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-secondary text-white" data-dismiss="modal" aria-label="Cancel">Cancel</a>
+                        <input type="submit" form="modal-add" value="Add" class="btn btn-primary text-white" />
+                    </div>
+                </div>
+            </div>
+        </div> <!--MODAL Add New-->
+        <!--MODAL Edit-->
+        <div class="modal fade" id="ModalEdit" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-md" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" id="modal-edit" asp-page-handler="Edit" enctype="multipart/form-data">
+                            <input type="hidden" id="hdnCreatedAt" asp-for="tbl_Product_Edit.created_date" />
+                            <div>
+                                <input type="hidden" id="hdnProdId" asp-for="tbl_Product_Edit.product_id" />
+                            </div>
+                            <div class="mt-3">
+                                <label>Nama Produk <span style="color:red">*</span></label>
+                                <input class="form-control mr-2" type="text" id="NameEdit" asp-for="tbl_Product_Edit.product_name" placeholder="Masukkan Nama Produk..." required />
+                            </div>
+                            <div class="mt-3">
+                                <label>Berat Produk <span style="color:red">*</span></label>
+                                <input class="form-control mr-2" type="number" id="WeightEdit" asp-for="tbl_Product_Edit.product_weight" placeholder="Masukkan Berat Produk..." required />
+                            </div>
+                            <div class="mt-3">
+                                <label>Harga Produk <span style="color:red">*</span></label>
+                                <input class="form-control mr-2" type="number" id="PriceEdit" asp-for="tbl_Product_Edit.price" placeholder="Masukkan Harga Produk..." required />
+                            </div>
+                            <div class="form-group mt-3">
+                                <label style="display:block">Gambar Produk <span style="color:red">*</span></label>
+                                <input class="form-control p-0" style="border:none; width:90px; color:transparent; display:inline" id="FotoProduk" type="file" name="FotoProdukEdit" accept=".png,.jpg, .jpeg" onchange="Pressed()" />
+                                <label style="display:inline;" id="fileLabelEdit">No file chosen</label>
+
+                            </div>
+                            <div class="mt-3">
+                                <label>Kategori Produk <span style="color:red">*</span></label>
+                                <select class="form-control form-select" id="categoryEdit" asp-for="tbl_Product_Edit.category_id" required>
+                                    @foreach (var item in Model.tbl_Category)
+                                    {
+                                        <option value="@item.category_id">@item.category_name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="mt-3">
+                                <label>Deskripsi Produk</label>
+                                <textarea class="form-control mr-2" type="text" id="DescriptionEdit" asp-for="tbl_Product_Edit.description" placeholder="Masukkan Deskripsi Produk..." style="height: 100px; word-break:break-word"></textarea>
+                            </div>
+                            <div class=" mt-3">
+                                <label class="text-secondary">Tersedia</label>
+                                <select class="form-control form-select" style="border-color:gainsboro;" id="AvailableEdit" asp-for="tbl_Product_Edit.flag_available">
+                                    <option value="Y">Tersedia</option>
+                                    <option value="N">Habis</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-secondary text-white" data-dismiss="modal" aria-label="Cancel">Cancel</a>
+                        <input type="submit" form="modal-edit" value="Edit" class="btn btn-primary text-white" />
+                    </div>
+                </div>
+            </div>
+        </div> <!--MODAL Edit-->
+        <!--MODAL Delete-->
+        <div class="modal fade" id="ModalDelete" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-md" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Delete</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div>
+                            <form method="post" id="modal-delete" asp-page-handler="Delete">
+                                <input type="hidden" name="product_id" id="hdnProdIdDelete" />
+                                <label>Apakah Anda yakin untuk menghapus data ini ?</label>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-secondary text-white" data-dismiss="modal" aria-label="Cancel">Cancel</a>
+                        <input type="submit" form="modal-delete" value="Delete" class="btn btn-primary text-white" />
+                    </div>
+                </div>
+            </div>
+        </div> <!-- modal delete -->
+        <!--MODAL image-->
+        <div class="modal fade" id="ModalImage" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-md" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Image</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="text-center">
+                            <img id="prodImg" style="width:80%"/>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-secondary text-white" data-dismiss="modal" aria-label="Close">Close</a>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- modal image -->
+
+    </div> <!-- card-body -->
+</div> <!-- card -->
+
+<script>
+    var table;
+
+    $(function () {
+        table = $("#tblProduct").DataTable();
+    });
+
+    function editTable(tr_list) {
+        let data = table.row(tr_list).data();
+
+        console.log(data);
+
+        let id = data[0];
+        let nama = data[1];
+        let weight = data[3];
+        let price = data[10];
+        let category = data[11];
+        let available = data[12];
+        let description = data[6];
+        let created_at = data[7];
+        let image = data[9];
+
+        $("#NameEdit").val(nama);
+        $("#WeightEdit").val(weight);
+        $("#PriceEdit").val(price);
+        $("#DescriptionEdit").val(description);
+        $("#AvailableEdit").val(available);
+        $("#hdnProdId").val(id);
+        $("#hdnCreatedAt").val(created_at);
+        $("#categoryEdit").val(category);
+
+        if (image != "") {
+            fileLabelEdit.innerHTML = "1 File has been uploaded.";
+        }
+    }
+
+    function deleteTable(kode) {
+        $("#hdnProdIdDelete").val(kode);
+        console.log($("#hdnProdIdDelete").val());
+    }
+
+    function Pressed() {
+        var a = document.getElementById('FotoProduk');
+        if (a.value == "") {
+            fileLabel.innerHTML = "No File Chosen";
+        }
+        else {
+            var theSplit = a.value.split('\\');
+            fileLabel.innerHTML = theSplit[theSplit.length - 1];
+        }
+    }
+
+    function loadImage(src) {
+        console.log(src);
+        var srcF = "data:image/jpg;base64," + src;
+        $("#prodImg").attr("src", src);
+    }
+</script>

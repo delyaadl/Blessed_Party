@@ -1,0 +1,132 @@
+﻿@page
+@model Blessed_Party.Pages.HistoryOrderModel
+@{
+    ViewData["Title"] = "Order History";
+}
+
+<!-- Breadcrumbs -->
+<ol class="breadcrumb">
+    <li class="breadcrumb-item text-primary font-weight-bold">Home</li>
+    <li class="breadcrumb-item font-weight-bold">Order History</li>
+</ol>
+
+<!-- Content -->
+<div class="card">
+    <div class="card-body">
+        <div class="card-title row">
+            <div class="col float-left">
+                <h1 class="bd-title montserrat font-weight-bold mb-2" id="content"> Order History</h1>
+            </div>
+            @*<div class="col float-right">
+                    <button type="button" class="btn btn-primary float-lg-right text-white" data-toggle="modal" data-target="#ModalAddNew">Export Report</button>
+                </div>*@
+        </div> <!-- card-title -->
+        <!--TABLE-->
+    <div class="row">
+        <div class="col">
+            <label style="color:red">@TempData["Message"]</label>
+        </div>
+    </div>
+        <div class="table-responsive">
+            <table class="table table-bordered" id="tblHistory">
+                <thead class="thead-light border-secondary">
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Detail Order</th>
+                        <th>Order Status</th>
+                        <th>Order Note</th>
+                        <th>Shipment AWB</th>
+                        <th>Order Created</th>
+                        <th>See Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ string products = "";}
+                    @foreach (var item in Model.tbl_Order)
+                    {
+                    <tr>
+                        <td>@item.order_id</td>
+                        <td>
+                            @foreach (var x in Model.tbl_dtl_Order)
+                            {
+                                if (item.order_id == x.order_id)
+                                {
+                                    @foreach (var y in Model.tbl_Product)
+                                    {
+                                        if (x.product_id == y.product_id)
+                                        {
+                                            products = products + y.product_name + ", ";
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            @if (products.Length >= 1)
+                            {
+                                products = products.Remove(products.Length - 2, 2);
+                            }
+                            <label>@products</label>
+                            @{ products = "";}
+                        </td>
+                        <td>
+                            @if (item.order_status == "0")
+                            {
+                                <label>Pesanan Dibuat</label>
+                            }
+                            else if (item.order_status == "1")
+                            {
+                                <label>Pesanan Telah Dibayar</label>
+                            }
+                            else if (item.order_status == "2")
+                            {
+                                <label>Pesanan Dikirim</label>
+                            }
+                            else if (item.order_status == "3")
+                            {
+                                <label>Pesanan Diterima</label>
+                            }
+                            else if (item.order_status == "4")
+                            {
+                                <label>Pesanan Selesai</label>
+                            }
+                            else if (item.order_status == "9")
+                            {
+                                <label>Pesanan Dibatalkan</label>
+                            }
+                            else
+                            {
+                                <label>Pesanan Dibuat</label>
+                            }
+                        </td>
+                        <td>@item.order_note</td>
+                        <td>
+                            @if (Model.tbl_Shipment != null)
+                            {
+                                @foreach (var x in Model.tbl_Shipment)
+                                {
+                                    if (x.order_id == item.order_id)
+                                    {
+                                        <label>@x.shipment_awb</label>
+                                        break;
+                                    }
+                                }
+                            }
+                        </td>
+                        <td>@item.order_date</td>
+                        <td class="text-center" style="width:50px"><a href="@Url.Page("OrderAndPayment", new { order_id = item.order_id })" class="btn btn-secondary"><i class="fas fa-eye"></i></a></td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div> <!-- table -->
+    </div> <!-- card-body -->
+</div> <!-- card -->
+
+<script>
+    var table;
+
+    $(function () {
+        table = $("#tblHistory").DataTable();
+    });
+</script>
+

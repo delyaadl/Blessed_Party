@@ -1,0 +1,485 @@
+﻿@page "{product_id}"
+@model Blessed_Party.Pages.ProductDetailModel
+@using System.Globalization;
+@{
+    ViewData["Title"] = "Products - Detail";
+}
+
+<style>
+    .rating {
+        width: 200px;
+    }
+
+    .rating__star {
+        cursor: pointer;
+        color: #dabd18b2;
+    }
+
+    input[type="number"] {
+        -webkit-appearance: textfield;
+        -moz-appearance: textfield;
+        appearance: textfield;
+    }
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+    }
+
+    .number-input {
+        border: 2px solid #ddd;
+        display: inline-flex;
+    }
+
+        .number-input,
+        .number-input * {
+            box-sizing: border-box;
+        }
+
+            .number-input button {
+                outline: none;
+                -webkit-appearance: none;
+                background-color: transparent;
+                border: none;
+                align-items: center;
+                justify-content: center;
+                width: 3rem;
+                height: 3rem;
+                cursor: pointer;
+                margin: 0;
+                position: relative;
+            }
+
+                .number-input button:before,
+                .number-input button:after {
+                    display: inline-block;
+                    position: absolute;
+                    content: '';
+                    width: 1rem;
+                    height: 2px;
+                    background-color: #212121;
+                    transform: translate(-50%, -50%);
+                }
+
+                .number-input button.plus:after {
+                    transform: translate(-50%, -50%) rotate(90deg);
+                }
+
+            .number-input input[type=number] {
+                font-family: sans-serif;
+                max-width: 5rem;
+                padding: .5rem;
+                border: solid #ddd;
+                border-width: 0 2px;
+                font-size: 2rem;
+                height: 3rem;
+                font-weight: bold;
+                text-align: center;
+            }
+</style>
+
+
+<!-- Breadcrumbs -->
+<ol class="breadcrumb">
+    <li class="breadcrumb-item text-primary font-weight-bold">Home</li>
+    <li class="breadcrumb-item font-weight-bold">Product</li>
+    <li class="breadcrumb-item font-weight-bold">Product Detail</li>
+</ol>
+
+<div class="card p-5 pt-2" style="width: 90%; margin: auto;">
+    <div class="card-body">
+        <div class="row mt-1">
+            <div class="col">
+                <label class="font-weight-bold" style="font-size:20pt">@TempData["product_name"]</label>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            @{ int oo = 0;}
+            @foreach (var x in Model.tbl_Product)
+            {
+                if (!TempData["product_id"].ToString().Contains(","))
+                {
+                    if (int.Parse(TempData["product_id"].ToString()) == x.product_id)
+                    {
+                        <div class="col-sm-3 pr-5">
+                            <div style="padding-bottom: 100%;  position: relative; overflow: hidden ">
+                                <img class="card-img-top bg-epm-turquoise02 pl-0 pr-0 pt-0 pb-0 rounded-top" style="position:absolute; max-width: 100%; max-height: 100%; top: 50%; left: 50%; transform: translateX(-50%) translateY(-50%); object-fit: cover;" src="@string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(x.product_image))">
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    @foreach (var yy in TempData["product_id"].ToString().Split(","))
+                    {
+                        @if (int.Parse(yy) == x.product_id)
+                        {
+                            if (oo == 0)
+                            {
+                                <div class="col-sm-3 pr-5">
+                                    <div class="row" id="rowApp">
+                                        <div class="col-sm-6">
+                                            <div style="padding-bottom: 100%;  position: relative; overflow: hidden ">
+                                                <img class="card-img-top bg-epm-turquoise02 pl-0 pr-0 pt-0 pb-0" style="position:absolute; max-width: 100%; max-height: 100%; top: 50%; left: 50%; transform: translateX(-50%) translateY(-50%); object-fit: cover;" src="@string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(x.product_image))">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+
+                                <script>
+                                    var imageDiv = '<div class="col-sm-6">' +
+                                        '<div style="padding-bottom: 100%;  position: relative; overflow: hidden ">' +
+                                        '<img class="card-img-top bg-epm-turquoise02 pl-0 pr-0 pt-0 pb-0" style="position:absolute; max-width: 100%; max-height: 100%; top: 50%; left: 50%; transform: translateX(-50%) translateY(-50%); object-fit: cover;" src="@string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(x.product_image))">' +
+                                        '</div></div>';
+                                    $("#rowApp").append(imageDiv);
+                                </script>
+                            }
+                            oo++;
+                        }
+                    }
+                }
+
+            }
+        <div class="col-sm-6">
+            <div class="row">
+                <div class="col">
+                    <label class="font-weight-bold">Deskripsi</label>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    @if (TempData["product_description"] != null)
+                    {
+                        <p>@Html.Raw(TempData["product_description"].ToString().Replace("end", "<br />"))</p>
+                    }
+                    else
+                    {
+                        <p>Tidak ada deskripsi.</p>
+                    }
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <label class="font-weight-bold" style="font-size:14pt;">Rp @decimal.Parse(TempData["price"].ToString()).ToString("N2", CultureInfo.CreateSpecificCulture("en-US"))</label>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="number-input">
+                        <button style="height: 30px; width: 30px; font-size: 12pt; background-color: #ebebeb" onclick="this.parentNode.querySelector('input[type=number]').stepDown(); reCalculate($(this).next().val(), $('#total_'), $('#price_'));"></button>
+                        <input style="height: 30px; width: 30px; font-weight:normal; font-size:12pt;" class="quantity" min="0" name="quantity" id="quantityValue" value="1" type="number">
+                        <button style="height: 30px; width: 30px; font-size: 12pt; background-color: #ebebeb " onclick="this.parentNode.querySelector('input[type=number]').stepUp(); reCalculate($('#quantity_').val(), $('#total_'), $('#price_'));" class="plus"></button>
+                    </div>
+                </div>
+                <div class="col p-0 ml-2">
+                    @if (!TempData["product_id"].ToString().Contains(","))
+                    {
+                        <button onclick="addToCart('@TempData["product_id"].ToString()', $('#quantityValue').val(), $('#addToCart'))" type="submit" id="addToCart" class="btn btn-success" style="height: 100%">
+                            Beli <i class="fas fa-fw fa-shopping-cart"></i>
+                        </button>
+                    }
+                    else
+                    {
+                        <button onclick="addToCart1('@TempData["product_id"].ToString()', $('#quantityValue').val())" type="submit" id="addToCart1" class="btn btn-success" style="height: 100%" data-toggle="modal" data-target="#ModalChecklist">
+                            Beli <i class="fas fa-fw fa-shopping-cart"></i>
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+
+            @if (TempData["product_id"].ToString().Contains(","))
+            {
+                <div class="col-sm-3">
+                    <table>
+                        @{int product_rating = 0;}
+                        @{int counter_rating = 0;}
+                        @foreach (var xx in Model.tbl_Product_2)
+                        {
+                            @foreach(var yyy in Model.tbl_Rating_Product)
+                            {
+                                if(yyy.product_id == xx.product_id)
+                                {
+                                    counter_rating++;
+                                    product_rating = product_rating + (int)yyy.rating_number;
+                                }
+                            }
+
+                            if(counter_rating != 0)
+                    {
+                                product_rating = product_rating / counter_rating;
+                    }
+                            <tr>
+                                <td>
+                                    <div class="row mb-1">
+                                        <div class="col-sm-3 pr-2">
+                                            <div style="padding-bottom: 100%;  position: relative; overflow: hidden ">
+                                                <img class="card-img-top bg-epm-turquoise02 pl-0 pr-0 pt-0 pb-0" style="position:absolute; max-width: 100%; max-height: 100%; top: 50%; left: 50%; transform: translateX(-50%) translateY(-50%); object-fit: cover;" src="@string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(xx.product_image))">
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <a href="@Url.Page("ProductDetail", new { product_id= xx.product_id })" style="border-bottom:1px solid deeppink; text-decoration:none; color:deeppink">@xx.product_name</a>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col">
+                                                    @if (product_rating != 0)
+                                                    {
+                                                        <label>Rata-rata Rating : @product_rating</label>
+                                                    } else 
+                                                    {
+                                                    <label>Belum ada penilaian.</label>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            product_rating = 0;
+                            counter_rating = 0;
+                        }
+                    </table>
+                </div>
+            }
+        </div>
+
+        @if (!TempData["product_id"].ToString().Contains(","))
+        {
+            <div class="row mt-5 mb-2">
+                <div class="col">
+                    <label>Penilaian Produk | @TempData["total_rating"].0 of 5.0 (@TempData["total_rating_count"] Penilaian)</label>
+                </div>
+            </div>
+            @if (TempData["rating_msg"] != null)
+            {
+                <div class="row">
+                    <div class="col">
+                        <label style="color:red">@TempData["rating_msg"]</label>
+                    </div>
+                </div>
+            }
+            <div class="row mb-3">
+                <div class="col-sm-2">
+                    <label class="score-wrap">
+                        <span class="rating">
+                            <i class="rating__star far fa-star"></i>
+                            <i class="rating__star far fa-star"></i>
+                            <i class="rating__star far fa-star"></i>
+                            <i class="rating__star far fa-star"></i>
+                            <i class="rating__star far fa-star"></i>
+                        </span>
+                    </label>
+                </div>
+                <div class="col">
+                    <form class="d-none" id="modal-rating" asp-page-handler="Rate">
+                        <input type="hidden" value="0" id="rating_value" name="rating_value" />
+                    </form>
+                    <input type="submit" form="modal-rating" class="btn btn-secondary" value="Submit">
+                </div>
+            </div>
+            @if (Model.tbl_Rating_Product.Count > 0)
+            {
+                <div class="row m-0">
+                    <div class="col-sm-4">
+                        @foreach (var item in Model.tbl_Rating_Product)
+                        {
+                            <div class="row pt-1" style="border:1px solid grey">
+                                <div class="col-sm-8">
+                                    @foreach (var x in Model.tbl_User)
+                                    {
+                                        if (x.user_id == item.user_id)
+                                        {
+                                            <label>@x.username</label>
+                                        }
+                                    }
+                                </div>
+                                <div class="col-sm-4 text-right">
+                                    <label>@item.rating_number.0 Of 5</label>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="row mt-5 mb-2">
+                    <div class="col">
+                        <label>Belum ada penilaian.</label>
+                    </div>
+                </div>
+            }
+        }
+
+        <div class="modal fade" id="ModalChecklist" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-md" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Choose Item</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" id="modal-checklist" asp-page-handler="AddToCart" enctype="multipart/form-data">
+                            <input type="hidden" id="quantityCheck" name="quantityCheck"/>
+                            <table class="table border-bottom-0 border-top-0" width="100%" cellspacing="0">
+                                <tbody id="tbody">
+                                </tbody>
+                            </table>
+                            <input type="hidden" name="prods_id" id="product_multiple" />
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-secondary text-white" data-dismiss="modal" aria-label="Cancel">Cancel</a>
+                        <input type="submit" form="modal-checklist" value="Add to Cart" class="btn btn-success text-white" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    const ratingStars = [...document.getElementsByClassName("rating__star")];
+
+    var modelProd = @Html.Raw(Json.Serialize(Model.tbl_Product));
+
+    function executeRating(stars) {
+        var rating_number = 0;
+        var rating_length = 0;
+        const starClassActive = "rating__star fas fa-star";
+        const starClassInactive = "rating__star far fa-star";
+        const starsLength = stars.length;
+        console.log(starsLength);
+        let i;
+        stars.map((star) => {
+            star.onclick = () => {
+                i = stars.indexOf(star);
+
+                if (star.className === starClassInactive) {
+                    for (i; i >= 0; --i) stars[i].className = starClassActive;
+                    rating_number = [...document.getElementsByClassName("fas fa-star")];
+                    console.log("active rating " + rating_number);
+                    rating_length = rating_number.length;
+                    console.log("active " + rating_length);
+                    $("#rating_value").val(rating_length);
+                } else {
+                    for (i; i < starsLength; ++i) stars[i].className = starClassInactive;
+                    rating_number = [...document.getElementsByClassName("fas fa-star")];
+                    console.log("inactive rating " + rating_number);
+                    rating_length = rating_number.length;
+                    console.log("inactive " + rating_length);
+                    $("#rating_value").val(rating_length);
+                }
+            };
+        });
+    }
+    executeRating(ratingStars);
+
+    function addToCart(product_id, quantity, btnId) {
+        $.ajax({
+            type: "POST",
+            url: "/api/Index/addToCartDetail",
+            data: '{product_id: "' + product_id + '", quantity: "' + quantity + '"}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                $(response.result).each(function () {
+                    var msg = this.msg;
+                    console.log(msg);
+                    console.log(this.returnUrl);
+                    if (msg.includes("Not")) {
+                        window.location.href = '/Login?ReturnUrl=%2F' + this.returnUrl;
+                    } else {
+                        var ori = btnId.html();
+                        console.log(ori);
+                        btnId.html('<i class="fas fa-check"></i>');
+                        setTimeout(function () {
+                            btnId.html(ori);
+                        }, 2000);
+                    }
+                });
+
+            },
+            error: function (response) { console.log(response); }
+        });
+    }
+
+    function addToCart1(product_id, quantity) {
+        $("#quantityCheck").val(quantity);
+        $("#tbody").empty();
+        var cnt = 0;
+        var prod_name = "";
+        var prod_id = product_id.split(",");
+        console.log(prod_id);
+        var rowAppend = "";
+        var multiple_id = "";
+        $("#product_multiple").val();
+
+        for (var item of prod_id) {
+            for (let x of modelProd) {
+                if (x.product_id == item) {
+                    prod_name = x.product_name;
+                    break;
+                }
+            }
+
+            multiple_id = multiple_id + item + ",";
+
+            rowAppend = rowAppend + '<tr><td width="30px">' +
+                '<div class="form-check form-check-inline">' +
+                '<input class="form-check-input checkboxID" onchange="onChangeCheck(this);" type="checkbox" id="checkbox_Edit_' + cnt + '" checked>' +
+                '<input type="hidden" id="hdnProductID_Edit_' + cnt + '" value="' + item + '" />' +
+                '</div></td>' +
+                '<td>' + prod_name + '</td>' +
+                '</tr>';
+            cnt++;
+        }
+
+        $("#product_multiple").val(multiple_id.substring(0, multiple_id.length - 1));
+        console.log($("#product_multiple").val());
+        $("#tbody").append(rowAppend);
+    }
+
+    function onChangeCheck(element) {
+        let checked_orgid = $("#product_multiple").val();
+        console.log(checked_orgid);
+        if (element.checked) {
+            if (checked_orgid == "") {
+                checked_orgid = $(element).next().val();
+                console.log($("#product_multiple").val());
+            } else {
+                checked_orgid = checked_orgid + "," + $(element).next().val();
+            }
+            $("#product_multiple").val(checked_orgid);
+            console.log($("#product_multiple").val());
+        } else {
+            let arr = checked_orgid.split(",");
+            arr = arr.filter(e => e !== $(element).next().val()); // filter ambil yang checked
+            $("#product_multiple").val(arr.join());
+            console.log($("#product_multiple").val());
+        }
+    }
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+

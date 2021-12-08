@@ -1,0 +1,88 @@
+﻿@page "{order_id}"
+@model Blessed_Party.Pages.Admin.Order_DetailModel
+@{
+    ViewData["Title"] = "Order_Detail";
+}
+
+<!-- Breadcrumbs -->
+<ol class="breadcrumb">
+    <li class="breadcrumb-item text-primary font-weight-bold">Master Orders</li>
+    <li class="breadcrumb-item font-weight-bold">Detail</li>
+</ol>
+
+<!-- Content -->
+<div class="card">
+    <div class="card-body">
+        <div class="card-title row">
+            <div class="col float-left">
+                <h1 class="bd-title montserrat font-weight-bold mb-2" id="content">Detail - Order ID @TempData["order_id"]</h1>
+            </div>
+        </div> <!-- card-title -->
+        <div class="row">
+            <div class="col">
+                <label class="text-danger">@TempData["Message"]</label>
+            </div>
+        </div>
+        <!--TABLE-->
+        <div class="table-responsive">
+            <table class="table table-bordered" id="tblProduct">
+                <thead class="thead-light border-secondary">
+                    <tr>
+                        <th class="d-none">Order Detail ID</th>
+                        <th class="d-none">Order ID</th>
+                        <th>Product</th>
+                        <th>Product Image</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ decimal total = 0;}
+                    @foreach (var item in Model.tbl_dtl_Order)
+                    {
+                        total = item.price * item.quantity; 
+                    <tr>
+                        <td class="d-none">@item.dtl_order_id</td>
+                        <td class="d-none">@item.order_id</td>
+                        <td>
+                            @foreach (var x in Model.tbl_Product)
+                            {
+                                if (item.product_id == x.product_id)
+                                {
+                                    <label>@x.product_name</label>
+                                    break;
+                                }
+                            }
+                        </td>
+                        <td>
+                            @foreach (var x in Model.tbl_Product)
+                            {
+                                if (item.product_id == x.product_id)
+                                {
+                                    <label>@x.product_name</label>
+                                    break;
+                                }
+                            }
+                        </td>
+                        <td>@item.price</td>
+                        <td>@item.quantity</td>
+                        <td>@total</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div> <!-- table -->
+        <!--MODAL-->
+       
+    </div> <!-- card-body -->
+</div> <!-- card -->
+
+<script>
+    var table;
+
+    $(function () {
+        table = $("#tblProduct").DataTable();
+    });
+</script>
+

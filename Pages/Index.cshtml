@@ -1,0 +1,480 @@
+﻿@page
+@model IndexModel
+@using System.Globalization;
+@{
+    ViewData["Title"] = "Home page";
+}
+
+
+<style>
+    footer.sticky-footer {
+        width: 100%;
+    }
+
+    a:hover {
+        color: gray;
+    }
+</style>
+
+<!-- Breadcrumbs -->
+<ol class="breadcrumb mb-4" style="width: 90%; margin:auto;">
+    <li class="breadcrumb-item font-weight-bold">
+        Home
+    </li>
+</ol>
+
+<div class="card p-5 pt-2" style="width: 90%; margin: auto;">
+    <div class="card-body">
+        <div class="mt-1 row">
+            <div class="col ml-2">
+                @if (Model.advPCf != null && Model.advPCf.Count > 0)
+                {
+                    <label style="font-weight:600; font-size:24pt;">Recommended Bundle For You</label>
+                }
+                else
+                {
+                    <label style="font-weight:600; font-size:24pt;">Best Seller Recommended Bundle</label>
+                }
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col">
+                <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner p-2 pb-5">
+
+                        @*<div class="carousel-item">
+                                            <div class="row">
+                                                @{ int i = 0;}
+                                                @foreach (var item in Model.AdvP)
+                                                {
+                                                    <div class="col-sm-4">
+
+                                                    </div>
+                                                    @if (i != 0 && i % 4 == 0)
+                                                    {
+                                                        </div>
+                                                    </div>
+                                        <div class="carousel-item">
+                                            <div class="row">
+                        }
+                        }*@
+
+                        @{ int penanda = 0;}
+                        @{ int jumlah = 0;}
+                        @{ string nama_produk = "";}
+                        @{ string produk_id = "";}
+                        @{ int col = 0; }
+                        @{ var model = Model.advPCf == null ? Model.AdvP : Model.advPCf.Count == 0 ? Model.AdvP : Model.advPCf;}
+                        @{ double round = Math.Ceiling(double.Parse((decimal.Divide(Model.AdvP.Count, 4)).ToString()));}
+                        @for (int i = 0; i < round; i++)
+                        {
+                            if (i == 4)
+                            {
+                                break;
+                            }
+                            if (i == 0)
+                            {
+                                <div class="carousel-item active">
+                                    <div class="row">
+                                        @{int x = 0;}
+                                        @foreach (var item in model)
+                                        {
+                                            jumlah = item.product_id.Count;
+                                            col = 12 / jumlah;
+                                            if (penanda == 1)
+                                            {
+                                                if (x < 4)
+                                                {
+                                                    x++;
+                                                    continue;
+                                                }
+                                            }
+                                            else if (penanda == 2)
+                                            {
+                                                if (x < 8)
+                                                {
+                                                    x++;
+                                                    continue;
+                                                }
+                                            }
+                                            else if (penanda == 3)
+                                            {
+                                                if (x < 12)
+                                                {
+                                                    x++;
+                                                    continue;
+                                                }
+                                            }
+
+                                            if (x != 0 && x % 4 == 0)
+                                            {
+                                                penanda++;
+                                                break;
+                                            }
+                                            <div class="col-sm-3">
+                                                <div class="card border-0 rounded shadow text-decoration-none p-2">
+                                                    <div class="row">
+                                                        @foreach (var y in item.product_image)
+                                                        {
+                                                            <div class="col-sm-@col">
+                                                                <div style="padding-bottom: 100%;  position: relative; overflow: hidden ">
+                                                                    <img class="pl-0 pr-0 pt-0 pb-0" style="position:absolute; max-width: 100%; max-height: 100%; top: 50%; left: 50%; transform: translateX(-50%) translateY(-50%); object-fit: cover;" src="@string.Format(" data:image /jpg;base64,{0}", Convert.ToBase64String(y))">
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="row mt-1">
+                                                                @foreach (var y in item.product_name)
+                                                                {
+                                                                    nama_produk = nama_produk + y + " + ";
+                                                                }
+
+                                                                @if (nama_produk != "")
+                                                                {
+                                                                    nama_produk = nama_produk.Remove(nama_produk.Length - 2, 2);
+                                                                }
+                                                                <div class="col">
+                                                                    @if (nama_produk.Length > 22)
+                                                                    {
+                                                                        <label style="text-align:justify;"><span style="font-weight:bold">PAKET @jumlah PRODUK!</span> @nama_produk.Substring(0, 22) ...</label>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <label style="text-align:justify;"><span style="font-weight:bold">PAKET @jumlah PRODUK!</span> @nama_produk</label>
+                                                                    }
+                                                                </div>
+                                                                @{ nama_produk = "";}
+                                                            </div>
+                                                            <div class="row">
+                                                                @foreach (var y in item.product_id)
+                                                                {
+                                                                    produk_id = produk_id + y + ",";
+                                                                }
+
+                                                                @if (produk_id != "")
+                                                                {
+                                                                    produk_id = produk_id.Remove(produk_id.Length - 1, 1);
+                                                                }
+                                                                <div class="col text-center">
+                                                                    <a href="@Url.Page("ProductDetail", new {product_id= produk_id})" style="color: hotpink; text-decoration: underline ">
+                                                                        Click for detail
+                                                                    </a>
+                                                                </div>
+                                                                @{ produk_id = "";}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            x++;
+                                        }
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="carousel-item">
+                                    <div class="row">
+                                        @{int x = 0;}
+                                        @foreach (var item in model)
+                                        {
+                                            jumlah = item.product_id.Count;
+                                            col = 12 / jumlah;
+                                            if (penanda == 1)
+                                            {
+                                                if (x < 4)
+                                                {
+                                                    x++;
+                                                    continue;
+                                                }
+                                            }
+                                            else if (penanda == 2)
+                                            {
+                                                if (x < 8)
+                                                {
+                                                    x++;
+                                                    continue;
+                                                }
+                                            }
+                                            else if (penanda == 3)
+                                            {
+                                                if (x < 12)
+                                                {
+                                                    x++;
+                                                    continue;
+                                                }
+                                            }
+
+
+                                            if ((penanda == 1 && x != 4 && x != 0 && x % 4 == 0))
+                                            {
+                                                penanda++;
+                                                break;
+                                            }
+
+                                            if ((penanda == 2 && x != 8 && x != 4 && x != 0 && x % 4 == 0))
+                                            {
+                                                penanda++;
+                                                break;
+
+                                            }
+                                            <div class="col-sm-3">
+                                                <div class="card border-0 rounded shadow text-decoration-none p-2">
+                                                    <div class="row">
+                                                        @foreach (var y in item.product_image)
+                                                        {
+                                                            <div class="col-sm-@col">
+                                                                <div style="padding-bottom: 100%;  position: relative; overflow: hidden ">
+                                                                    <img class="pl-0 pr-0 pt-0 pb-0" style="position:absolute; max-width: 100%; max-height: 100%; top: 50%; left: 50%; transform: translateX(-50%) translateY(-50%); object-fit: cover;" src="@string.Format(" data:image /jpg;base64,{0}", Convert.ToBase64String(y))">
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="row mt-1">
+                                                                @foreach (var y in item.product_name)
+                                                                {
+                                                                    nama_produk = nama_produk + y + " + ";
+                                                                }
+
+                                                                @if (nama_produk != "")
+                                                                {
+                                                                    nama_produk = nama_produk.Remove(nama_produk.Length - 2, 2);
+                                                                }
+                                                                <div class="col">
+                                                                    @if (nama_produk.Length > 22)
+                                                                    {
+                                                                        <label style="text-align:justify;"><span style="font-weight:bold">PAKET @jumlah PRODUK!</span> @nama_produk.Substring(0, 22) ...</label>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <label style="text-align:justify;"><span style="font-weight:bold">PAKET @jumlah PRODUK!</span> @nama_produk</label>
+                                                                    }
+                                                                </div>
+                                                                @{ nama_produk = "";}
+                                                            </div>
+                                                            <div class="row">
+
+                                                                @foreach (var y in item.product_id)
+                                                                {
+                                                                    produk_id = produk_id + y + ",";
+                                                                }
+
+                                                                @if (produk_id != "")
+                                                                {
+                                                                    produk_id = produk_id.Remove(produk_id.Length - 1, 1);
+                                                                }
+                                                                <div class="col text-center">
+                                                                    <a href="@Url.Page("ProductDetail", new {product_id= produk_id})" style="color: hotpink; text-decoration: underline ">
+                                                                        Click for detail
+                                                                    </a>
+                                                                </div>
+                                                                @{ produk_id = "";}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            x++;
+                                        }
+                                    </div>
+                                </div>
+                            }
+
+                        }
+                    </div>
+                    <a class="carousel-control-prev float-left" href="#carouselExampleControls" role="button" data-slide="prev" style="left:-10%;">
+                        <span class="carousel-control-prev-icon" aria-hidden="true" style="background-color:pink"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next float-right" href="#carouselExampleControls" role="button" data-slide="next" style="right:-10%;">
+                        <span class="carousel-control-next-icon" aria-hidden="true" style="background-color:pink"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-3 row">
+            <div class="col">
+                <label style="font-weight: 600; font-size: 24pt;">All Products</label>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-sm-2">
+                <select onchange="changeCategory($(this).val());" class="form-control">
+                    <option value="9999">Semua Kategori</option>
+                    @foreach (var item in Model.tbl_Category)
+                    {
+                        <option value="@item.category_id">@item.category_name</option>
+                    }
+                </select>
+            </div>
+            <div class="col">
+                <button id="SearchBtn" class="btn bg-epm-pink01 float-right ml-1 text-white" onclick="searchProduct($('#search').val());"><i class="fa fa-search"></i></button>
+                <input style="width:15%"  type="text" class="form-control float-right" id="search" placeholder="Search product..."/>
+            </div>
+        </div>
+        <div class="row mt-3" id="tbody">
+            @{int yy = 1;}
+            @foreach (var item in Model.tbl_Product)
+            {
+                <div class="text-center col-lg-3 p-3 mb-4">
+                    <div class="card border-0 rounded shadow text-decoration-none">
+                        <a href="@Url.Page("ProductDetail", new { product_id=item.product_id })">
+                            <div style="padding-bottom: 100%;  position: relative; overflow: hidden ">
+                                <img class="card-img-top bg-epm-turquoise02 pl-0 pr-0 pt-0 pb-0 rounded-top" style="position:absolute; max-width: 100%; max-height: 100%; top: 50%; left: 50%; transform: translateX(-50%) translateY(-50%); object-fit: cover;" src="@string.Format(" data:image /jpg;base64,{0}", Convert.ToBase64String(item.product_image))">
+                            </div>
+                            <div class="card-body text-center">
+                                @if (item.product_name.Length > 20)
+                                {
+                                    <h5 class="card-text montserrat font-weight-bold text-dark">@item.product_name.Substring(0, 20)...</h5>
+                                }
+                                else
+                                {
+                                    <h5 class="card-text montserrat font-weight-bold text-dark">@item.product_name</h5>
+                                }
+                                <h6 class="card-text montserrat text-success">Rp @item.price.ToString("N2", CultureInfo.CreateSpecificCulture("id-ID"))</h6>
+                            </div>
+                        </a>
+                        <button onclick="addToCart(@item.product_id, $('#addToCart_@yy'))" type="submit" id="addToCart_@yy" class="btn btn-success" style="margin:auto; margin-bottom:20px; width:20%">
+                            <i class="fas fa-fw fa-shopping-cart"></i>
+                        </button>
+                    </div>
+                </div>
+                yy++;
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    $('.carousel').carousel()
+
+    function addToCart(product_id, btnId) {
+        $.ajax({
+            type: "POST",
+            url: "/api/Index/addToCart",
+            data: '{product_id: "' + product_id + '"}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                $(response.result).each(function () {
+                    var msg = this.msg;
+                    console.log(msg);
+                    if (msg.includes("Not")) {
+                        window.location.href = '/Login';
+                    } else {
+                        var ori = btnId.html();
+                        console.log(ori);
+                        btnId.html('<i class="fas fa-check"></i>');
+                        setTimeout(function () {
+                            btnId.html(ori);
+                        }, 2000);
+                    }
+                });
+
+            },
+            error: function (response) { console.log(response); }
+        });
+    }
+
+    $("#search").keypress(function (e) {
+        if (e.keyCode === 13) {
+            e.preventDefault();
+            $("#SearchBtn").trigger("click");
+        }
+    });
+
+    function searchProduct(value) {
+        $.ajax({
+            type: "POST",
+            url: "/api/Index/SearchProduct",
+            data: '{query: "' + value + '"}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                $("#tbody").empty();
+                var yy = 1;
+                $(response.result).each(function () {
+                    var rowAppend = '<div class="text-center col-lg-3 p-3 mb-4">' +
+                        '<div class="card border-0 rounded shadow text-decoration-none">' +
+                        '<a href="/ProductDetail/' + this.product_id + '">' +
+                        '<div style="padding-bottom: 100%;  position: relative; overflow: hidden ">' +
+                        '<img class="card-img-top bg-epm-turquoise02 pl-0 pr-0 pt-0 pb-0 rounded-top" style="position:absolute; max-width: 100%; max-height: 100%; top: 50%; left: 50%; transform: translateX(-50%) translateY(-50%); object-fit: cover;" src="' + this.product_image + '">' +
+                        '</div>' +
+                        '<div class="card-body text-center">';
+
+                    if (this.product_name.Length > 20) {
+                        rowAppend = rowAppend + '<h5 class="card-text montserrat font-weight-bold text-dark">' + this.product_name.substring(0, 20) + '...</h5>';
+                    }
+                    else {
+                        rowAppend = rowAppend + '<h5 class="card-text montserrat font-weight-bold text-dark">' + this.product_name + '</h5>';
+                    }
+
+                    rowAppend = rowAppend + '<h6 class="card-text montserrat text-success">Rp' + Intl.NumberFormat('en-US', { minimumFractionDigits: 2 }).format(this.price) + '</h6>' +
+                        '</div>' +
+                        '</a>' +
+                        '<button onclick="addToCart(' + this.product_id + ', $(\'#addToCart_' + yy + '\'))" type="submit" id="addToCart_' + yy + '" class="btn btn-success" style="margin:auto; margin-bottom:20px; width:20%">' +
+                        '<i class="fas fa-fw fa-shopping-cart"></i>' +
+                        '</button>' +
+                        '</div>' +
+                        '</div>';
+
+                    yy = yy + 1;
+                    $("#tbody").append(rowAppend);
+                });
+
+            },
+            error: function (response) { console.log(response); }
+        });
+    }
+
+    function changeCategory(value) {
+        $.ajax({
+            type: "POST",
+            url: "/api/Index/ChangeCategory",
+            data: '{query: "' + value + '"}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                $("#tbody").empty();
+                var yy = 1;
+                $(response.result).each(function () {
+                    var rowAppend = '<div class="text-center col-lg-3 p-3 mb-4">' +
+                        '<div class="card border-0 rounded shadow text-decoration-none">' +
+                        '<a href="/ProductDetail/' + this.product_id + '">' +
+                        '<div style="padding-bottom: 100%;  position: relative; overflow: hidden ">' +
+                        '<img class="card-img-top bg-epm-turquoise02 pl-0 pr-0 pt-0 pb-0 rounded-top" style="position:absolute; max-width: 100%; max-height: 100%; top: 50%; left: 50%; transform: translateX(-50%) translateY(-50%); object-fit: cover;" src="' + this.product_image + '">' +
+                        '</div>' +
+                        '<div class="card-body text-center">';
+
+                    if (this.product_name.Length > 20) {
+                        rowAppend = rowAppend + '<h5 class="card-text montserrat font-weight-bold text-dark">' + this.product_name.substring(0, 20) + '...</h5>';
+                    }
+                    else {
+                        rowAppend = rowAppend + '<h5 class="card-text montserrat font-weight-bold text-dark">' + this.product_name + '</h5>';
+                    }
+
+                    rowAppend = rowAppend + '<h6 class="card-text montserrat text-success">Rp' + Intl.NumberFormat('en-US', { minimumFractionDigits: 2 }).format(this.price) + '</h6>' +
+                        '</div>' +
+                        '</a>' +
+                        '<button onclick="addToCart(' + this.product_id + ', $(\'#addToCart_' + yy + '\'))" type="submit" id="addToCart_' + yy + '" class="btn btn-success" style="margin:auto; margin-bottom:20px; width:20%">' +
+                        '<i class="fas fa-fw fa-shopping-cart"></i>' +
+                        '</button>' +
+                        '</div>' +
+                        '</div>';
+
+                    yy = yy + 1;
+                    $("#tbody").append(rowAppend);
+                });
+
+            },
+            error: function (response) { console.log(response); }
+        });
+    }
+</script>

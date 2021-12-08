@@ -1,0 +1,310 @@
+﻿@page "{order_id}"
+@model Blessed_Party.Pages.OrderAndPaymentModel
+@using System.Globalization;
+@{
+}
+
+<div class="card m-4 mt-1 p-3">
+    <div class="card-body">
+        <div class="row m-1 border-bottom pb-2 pr-0 pl-0 mb-4">
+            <div class="col p-0">
+                <h4 style="font-weight:bold;">Alamat</h4>
+            </div>
+        </div>
+        <div class="row ml-1">
+            <div class="col">
+                <label class="monsterrat">@TempData["shipping_address"]</label>
+            </div>
+        </div>
+
+        <div class="row m-1 mt-4 border-bottom pb-2 pr-0 pl-0 mb-4">
+            <div class="col p-0">
+                <h4 style="font-weight:bold;">Keranjang Belanja</h4>
+            </div>
+        </div>
+        @if (TempData["Message"] != null)
+        {
+            <div class="row">
+                <div class="col">
+                    <label style="color:red">@TempData["Message"]</label>
+                </div>
+            </div>
+        }
+        <!--TABLE-->
+        <div class="mt-2">
+            <table class="table table-bordered" id="">
+                <thead class="thead-light border-secondary">
+                    <tr>
+                        <th class="d-none">Order ID</th>
+                        <th class="d-none">Detail Order ID</th>
+                        <th>Nama Produk</th>
+                        <th>Banyaknya</th>
+                        <th>Harga</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ decimal total = 0; }
+                    @{ decimal subtotal = 0; }
+                    @foreach (var item in Model.tbl_dtl_Order)
+                    {
+                        <tr>
+                            <td class="d-none">@item.order_id</td>
+                            <td class="d-none">@item.dtl_order_id</td>
+                            <td>
+                                @foreach (var x in Model.tbl_Product)
+                                {
+                                    if (item.product_id == x.product_id)
+                                    {
+                                        <div style="width:80px; display:inline; height:80px; overflow:hidden" class="mr-3">
+                                            <img src="@string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(x.product_image))" style="width:80px" />
+                                        </div>
+                                    }
+                                }
+                                @foreach (var x in Model.tbl_Product)
+                                {
+                                    if (item.product_id == x.product_id)
+                                    {
+                                        <label style="display:inline">@x.product_name</label>
+                                        break;
+                                    }
+                                }
+                            </td>
+                            <td>@item.quantity</td>
+                            <td class="text-right">
+                                @foreach (var x in Model.tbl_Product)
+                                {
+                                    if (item.product_id == x.product_id)
+                                    {
+                                        <label>@x.price.ToString("N2", CultureInfo.CreateSpecificCulture("en-US"))</label>
+                                    }
+                                }
+                            </td>
+                            <td class="text-right">
+                                @foreach (var x in Model.tbl_Product)
+                                {
+                                    if (item.product_id == x.product_id)
+                                    {
+                                        total = x.price * item.quantity;
+                                        subtotal = subtotal + (x.price * item.quantity);
+                                        break;
+                                    }
+                                }
+                                <label>@total.ToString("N2", CultureInfo.CreateSpecificCulture("en-US"))</label>
+                                @{ total = 0;}
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td class="d-none"></td>
+                        <td class="d-none"></td>
+                        <td style="border-bottom:none; border-right:none;" colspan="2"></td>
+                        <td style="border-right:none; border-left:none; border-top:none; border-bottom:none;" class="text-right">Subtotal</td>
+                        <td style="border-left:none; border-top:none; border-bottom:none" class="text-right" id="subtotal_text">@subtotal.ToString("N2", CultureInfo.CreateSpecificCulture("en-US"))</td>
+                    </tr>
+                    <tr>
+                        <td class="d-none"></td>
+                        <td class="d-none"></td>
+                        <td style="border-bottom:none; border-top:none; border-right:none;" colspan="2"></td>
+                        <td style="border:none;" class="text-right">Biaya Pengiriman</td>
+                        <td style="border-left:none; border-top:none; border-bottom:none" class="text-right" id="shipping_text">@decimal.Parse(TempData["shipping_value"].ToString()).ToString("N2", CultureInfo.CreateSpecificCulture("en-US"))</td>
+                    </tr>
+                    @{ decimal jumlah = subtotal + decimal.Parse(TempData["shipping_value"].ToString());}
+                    <tr>
+                        <td class="d-none"></td>
+                        <td class="d-none"></td>
+                        <td style="border-top:none; border-right:none;" colspan="2"></td>
+                        <td style="border-right:none; border-left:none; border-top:none;" class="text-right">Jumlah</td>
+                        <td style="border-left:none; border-top:none;" class="text-right" id="jumlah_text">@jumlah.ToString("N2", CultureInfo.CreateSpecificCulture("en-US")) </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div> <!-- table -->
+        <input type="hidden" id="subtotal" value="@subtotal" />
+
+        <form id="modal-order" method="post" enctype="multipart/form-data">
+            <div class="row mt-2">
+                <div class="col">
+                    <label style="font-weight:bold" class="border-bottom pb-2 mb-2">Pilih Jenis Pengiriman</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                @{ int counter = 1;}
+                @{ string firstVal = "";}
+                @{ decimal firstShip = 0;}
+                @if (TempData["order_status"].ToString() == "0")
+                {
+                    <div class="row ml-1">
+                        @foreach (var item in Model.costViewList)
+                        {
+                            if (counter == 1)
+                            {
+                                firstVal = item.service;
+                                firstShip = item.value;
+                                <div class="form-group form-check col-sm-3">
+                                    <input type="hidden" value="@item.value" id="value_@counter" />
+                                    <input type="hidden" value="@item.service" id="service_@counter" />
+                                    <input class="form-check-input" type="radio" name="shipping" id="shipping_@counter" onchange="checkboxChange(this);" checked>
+                                    <label class="form-check-label" for="gridCheck1"><span class="font-weight-bold">JNE @item.service</span> - Rp @item.value.ToString("N2", CultureInfo.CreateSpecificCulture("en-US"))</label>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="form-group form-check col-sm-3">
+                                    <input type="hidden" value="@item.value" id="value_@counter" />
+                                    <input type="hidden" value="@item.service" id="value_@counter" />
+                                    <input class="form-check-input" type="radio" name="shipping" id="shipping_@counter" onchange="checkboxChange(this);">
+                                    <label class="form-check-label" for="gridCheck1"><span class="font-weight-bold">JNE @item.service</span> - Rp @item.value.ToString("N2", CultureInfo.CreateSpecificCulture("en-US"))</label>
+                                </div>
+                            }
+
+                            counter++;
+                        }
+
+                    </div>
+                }
+                else
+                {
+                    <div class="row">
+                        <div class="col">
+                            <label>JNE @TempData["service"] - Rp @decimal.Parse(TempData["shipping_value"].ToString()).ToString("N2", CultureInfo.CreateSpecificCulture("en-US"))</label>
+                        </div>
+                    </div>
+                }
+                <input type="hidden" id="shipping_srv" value="@firstVal" name="shipping_srv" />
+                <input type="hidden" id="shipping_val" value="@firstShip" name="shipping_val" />
+
+            </div>
+            <div class="row mt-2">
+                <div class="col">
+                    <label style="font-weight:bold">Tambahkan Catatan</label>
+                </div>
+            </div>
+            <div class="row">
+                @if (TempData["order_status"].ToString() == "0")
+                {
+                    <div class="col">
+                        <input type="text" placeholder="tambahkan catatan..." asp-for="edit_Order.order_note" class="form-control" style="height:120px; width:40%" />
+                    </div>
+                }
+                else
+                {
+                    <div class="col-sm-5" style="word-break:break-word">
+                        <p>
+                            @TempData["catatan"]
+                        </p>
+                    </div>
+                }
+            </div>
+
+            <div class="row mt-4">
+                <div class="col">
+                    <label>Informasi Pembayaran</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <label>Silakan transfer jumlah total ke rekening bank berikut ini.</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <p>
+                        Transfer jumlah total ke rekening bank berikut ini. : <br />
+                        - BCA 1790173453 atas nama Delya. <br /><br />
+                        ============================== <br /><br />
+                        Pengiriman hanya dilakukan setelah kamu transfer dan konfirmasi pembayaran. <br />
+                        Cantumkan order ID di berita transfer apabila memungkinkan.<br /><br />
+
+                        Best Regards,<br />
+                        Blessed Party<br />
+                        Pesanan anda tidak akan kami kirim sampai kami menerima pembayaran.
+                    </p>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col">
+                    <label style="font-weight:bold;">Upload Bukti Pembayaran</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    @if (TempData["order_status"].ToString() == "0")
+                    {
+                        <input class="form-control p-0" style="border:none; width:90px; color:transparent; display:inline" id="proof_of_payment" type="file" name="proof_of_payment" accept=".png,.jpg,.jpeg" onchange="Pressed()" />
+                        @if (TempData["fileUpload"].ToString() != "")
+                        {
+                            <label style="display:inline;" id="fileLabel" class="mr-2">@TempData["fileUpload"]</label>
+                        }
+                        else
+                        {
+                            <label style="display:inline;" id="fileLabel" class="mr-2">No file chosen</label>
+                        }
+                        <input style="display:inline" type="submit" asp-page-handler="Cancel" class="btn-secondary btn mr-2" value="BATAL" />
+                        <input style="display:inline" type="submit" asp-page-handler="Order" class="btn-success btn" value="ORDER!" />
+                    }
+                    else if (int.Parse(TempData["order_status"].ToString()) > 0 && int.Parse(TempData["order_status"].ToString()) < 3)
+                    {
+                        <label style="color:green;">Anda sudah mengupload bukti pembayaran. Silakan tunggu proses selanjutnya.</label>
+                    }
+                    else
+                    {
+                        <label style="color:green;">Pesanan telah selesai, silakan klik terima pesanan jika belum, dan jangan lupa order lagi ya!</label>
+                    }
+                </div>
+            </div>
+            <input type="hidden" id="weight" name="weight" value="@TempData["weight"]" />
+
+            @if(int.Parse(TempData["order_status"].ToString()) > 0 && int.Parse(TempData["order_status"].ToString()) < 4)
+            {
+                <div class="row">
+                    <div class="col">
+                        <input style="display:inline" type="submit" asp-page-handler="Terima" class="btn-success btn mr-2" value="Pesanan Diterima" />
+                    </div>
+                </div>
+            }
+        </form>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        console.log($("#shipping_srv").val());
+        console.log($("#shipping_val").val());
+    });
+
+    function checkboxChange(checkbox_element) {
+        if (checkbox_element.checked) {
+            console.log("checked");
+            $("#shipping_srv").val($(checkbox_element).prev().val());
+            $("#shipping_val").val($(checkbox_element).prev().prev().val());
+            console.log($("#shipping_srv").val());
+            console.log($("#shipping_val").val());
+
+            var pengiriman = $("#shipping_val").val();
+            var subtotal = $("#subtotal").val();
+            var jumlah = parseInt(pengiriman) + parseInt(subtotal) ;
+
+            $("#shipping_text").text("Rp " + Intl.NumberFormat('en-US', { minimumFractionDigits: 2 }).format($("#shipping_val").val()));
+            $("#jumlah_text").text("Rp " + Intl.NumberFormat('en-US', { minimumFractionDigits: 2 }).format(jumlah));
+        } else {
+            console.log("unchecked");
+            $("#shipping_srv").val($("#shipping_srv").val());
+        }
+    }
+
+    function Pressed() {
+        var a = document.getElementById('proof_of_payment');
+        if (a.value == "") {
+            fileLabel.innerHTML = "No File Chosen";
+        }
+        else {
+            var theSplit = a.value.split('\\');
+            fileLabel.innerHTML = theSplit[theSplit.length - 1];
+        }
+    }
+</script>

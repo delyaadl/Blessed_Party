@@ -1,0 +1,120 @@
+﻿@page
+@model Blessed_Party.Pages.RegisterModel
+@{
+}
+
+<style>
+    #login-container {
+        margin: auto;
+        width: 500px;
+    }
+
+    .register-text {
+        color: hotpink;
+    }
+
+        .register-text:hover {
+            color: deeppink;
+        }
+</style>
+
+<div id="register-container">
+    <form id="register-page" asp-page-handler="Register" method="post" class="m-5">
+        <div class="row">
+            <div class="col">
+                <label style="font-weight:bold; font-size:24pt;">Registrasi Akun</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label>Nama Lengkap <span style="color:red">*</span></label>
+                    <input type="text" class="form-control" id="userfullname" asp-for="Input.user_fullname" placeholder="Nama Lengkap" required>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label>Email <span style="color:red">*</span></label>
+                    <input type="email" class="form-control" id="email" asp-for="Input.user_email" placeholder="Email" required>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label>Username <span style="color:red">*</span></label>
+                    <input type="text" class="form-control" id="username" asp-for="Input.username" placeholder="Username" required>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label>No. Telp <span style="color:red">*</span></label>
+                    <input type="number" class="form-control" id="userphone" asp-for="Input.user_phone" placeholder="No. Telp" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <label style="font-weight:bold; font-size:16pt;">Alamat</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label>Alamat <span style="color:red">*</span></label>
+                    <input type="text" class="form-control" id="useraddress" asp-for="Input.user_address" placeholder="Alamat" required>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label>Kota <span style="color:red">*</span></label>
+                    <select class="form-control" style="border-color:gainsboro;" id="usercity" asp-for="Input.city_id">
+                        @foreach (var item in Model.cityViewList)
+                        {
+                            <option value="@item.city_id">@item.city_name</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label>Provinsi <span style="color:red">*</span></label>
+                    <select class="form-control" style="border-color:gainsboro;" id="userprovince" asp-for="Input.province_id">
+                        @foreach (var item in Model.provinceViewList)
+                        {
+                            <option value="@item.province_id">@item.province</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <label style="font-weight:bold; font-size:16pt;">Password</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label>Password <span style="color:red">*</span></label>
+                    <input type="password" class="form-control" id="userpass" asp-for="Input.userpass" placeholder="Password" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <label style="color:red">@TempData["Message"]</label>
+            </div>
+        </div>
+        <div class="text-right">
+            <div style="display:inline">
+                <input type="submit" value="Register" class="btn btn-primary text-white" />
+            </div>
+        </div>
+    </form>
+</div>
