@@ -117,9 +117,6 @@ namespace Blessed_Party.Pages
                 List<tbl_Rating_Product> rating_List = _context.tbl_Rating_Product.Where(x => x.user_id == userid).ToList();
                 //var max_date = _context.tbl_Prediction.Where(x => x.user_id == userid).OrderByDescending(e => e.created_date).Select(x => x.created_date).FirstOrDefault();
                 //var min_date = max_date.AddMinutes(-0.2);
-                await CF.Prediction(userid);
-                await CF.Prediction40(userid);
-                await CF.Prediction80(userid);
                 tbl_Prediction = await _context.tbl_Prediction.Where(x => x.user_id == userid).ToListAsync();
 
                 advPCf = new List<AdvicedProds>();
