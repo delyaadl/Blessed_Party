@@ -6,6 +6,8 @@
 
     var UserLabels = Newtonsoft.Json.JsonConvert.SerializeObject(Model.UserDashboard_tbl.Select(x => x.username).ToList());
     var TOrder = Newtonsoft.Json.JsonConvert.SerializeObject(Model.UserDashboard_tbl.Select(x => x.Quantity).ToList());
+
+    ViewData["Title"] = "Master Dashboard";
 }
 
 <!-- Breadcrumbs -->

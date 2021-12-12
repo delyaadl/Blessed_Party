@@ -79,6 +79,10 @@ namespace Blessed_Party.CollaborativeFiltering
 
             foreach (var item in pairs)
             {
+                if(item.Item1 == 17 || item.Item2 == 17)
+                {
+                    string text = "test";
+                }
 
                 if(count == 0)
                 {
@@ -168,6 +172,7 @@ namespace Blessed_Party.CollaborativeFiltering
             int count = 0;
             foreach (var item in similarItem)
             {
+
                 if (count == 0)
                 {
                     temp_id = item.product_1;

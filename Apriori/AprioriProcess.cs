@@ -67,7 +67,7 @@ namespace Blessed_Party.Apriori
         public List<AdvicedProduct2> DoApriori(List<int> productids, List<int> allproducts, int N, List<int[]> transactionindex)
         {
             //int minSupport = 6; // inisiasi min sup
-            int minSupport = 12; // inisiasi min sup
+            int minSupport = 10; // inisiasi min sup
             double minConfidence = 0.75; // minimum confidence
 
             // cari frequent itemsets yang memenuhi minimum support, minimal 2, maksimal 3 item

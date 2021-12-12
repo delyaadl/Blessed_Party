@@ -11,6 +11,7 @@ namespace egitlab_PotionNetCore
     public class QueryData
     {
         readonly string strCon = @"Data Source=DESKTOP-RV5F2H7;Initial Catalog=Blessed_Party;Persist Security Info=True;Integrated Security=SSPI;";
+        readonly string strConPub = @"Data Source=SQL5105.site4now.net,1433;Initial Catalog=db_a7d8a1_blessedparty;User Id=db_a7d8a1_blessedparty_admin;Password=blessed123;";
 
         public DataTable GetDataSql(string strsql)
         {

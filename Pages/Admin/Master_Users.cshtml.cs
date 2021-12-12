@@ -24,6 +24,14 @@ namespace Blessed_Party.Pages.Admin
         }
 
         public IList<tbl_User> tbl_User { get; set; }
+        public IList<tbl_cart> tbl_cart { get; set; }
+        public IList<tbl_Rating_Product> tbl_Rating_Product { get; set; }
+        public IList<tbl_Prediction> tbl_Prediction { get; set; }
+        public IList<tbl_Order> tbl_Order { get; set; }
+        public IList<tbl_Prediction40> tbl_Prediction40 { get; set; }
+        public IList<tbl_Prediction80> tbl_Prediction80 { get; set; }
+        public IList<tbl_Rating_40_User> tbl_Rating_40_User { get; set; }
+        public IList<tbl_Rating_80_User> tbl_Rating_80_User { get; set; }
         public IList<provinceView> provinceViewList { get; set; }
         public IList<cityView> cityViewList { get; set; }
 
@@ -89,32 +97,6 @@ namespace Blessed_Party.Pages.Admin
             cityViewList = JsonConvert.DeserializeObject<List<cityView>>(result1);
         }
 
-        //public async Task<IActionResult> OnPostAddAsync()
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return RedirectToPage();
-        //    }
-
-        //    tbl_User = await _context.tbl_User.Where(e => e.username == tbl_User_Add.username).ToListAsync();
-
-        //    if (tbl_User.Count > 0)
-        //    {
-        //        TempData["Message"] = "username telah terdaftar!";
-        //    }
-        //    else
-        //    {
-        //        _context.tbl_User.Add(tbl_User_Add);
-        //        await _context.SaveChangesAsync();
-
-        //        TempData["Message"] = "Data berhasil ditambahkan!";
-        //    }
-
-        //    await LoadAll();
-
-        //    return RedirectToPage();
-        //}
-
         public async Task<IActionResult> OnPostEditAsync()
         {
             if (!ModelState.IsValid)
@@ -167,6 +149,21 @@ namespace Blessed_Party.Pages.Admin
         {
 
             tbl_User_Delete = await _context.tbl_User.FindAsync(user_id);
+            tbl_cart = await _context.tbl_cart.Where(x => x.user_id == user_id).ToListAsync();
+            tbl_Rating_Product = await _context.tbl_Rating_Product.Where(x => x.user_id == user_id).ToListAsync();
+            tbl_Rating_40_User = await _context.tbl_Rating_40_User.Where(x => x.user_id == user_id).ToListAsync();
+            tbl_Rating_80_User = await _context.tbl_Rating_80_User.Where(x => x.user_id == user_id).ToListAsync();
+            tbl_Prediction = await _context.tbl_Prediction.Where(x => x.user_id == user_id).ToListAsync();
+            tbl_Prediction40 = await _context.tbl_Prediction40.Where(x => x.user_id == user_id).ToListAsync();
+            tbl_Prediction80 = await _context.tbl_Prediction80.Where(x => x.user_id == user_id).ToListAsync();
+            tbl_Order = await _context.tbl_Order.Where(x => x.user_id == user_id).ToListAsync();
+
+            if(tbl_cart.Count > 0 || tbl_Rating_Product.Count > 0 || tbl_Prediction.Count > 0 || tbl_Prediction40.Count > 0 || tbl_Prediction80.Count > 0 ||
+                tbl_Rating_40_User.Count > 0 || tbl_Rating_80_User.Count > 0 || tbl_Order.Count > 0)
+            {
+                TempData["Message"] = "Tidak dapat menghapus user karena user sudah pernah melakukan transaksi / rating!";
+                return RedirectToPage();
+            }
 
             if (tbl_User_Delete != null)
             {

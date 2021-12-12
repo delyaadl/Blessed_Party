@@ -391,6 +391,7 @@
     });
 
     function searchProduct(value) {
+        console.log(value);
         $.ajax({
             type: "POST",
             url: "/api/Index/SearchProduct",
@@ -401,6 +402,8 @@
                 $("#tbody").empty();
                 var yy = 1;
                 $(response.result).each(function () {
+
+                    console.log(response.result);
                     var rowAppend = '<div class="text-center col-lg-3 p-3 mb-4">' +
                         '<div class="card border-0 rounded shadow text-decoration-none">' +
                         '<a href="/ProductDetail/' + this.product_id + '">' +
@@ -429,6 +432,7 @@
                     $("#tbody").append(rowAppend);
                 });
 
+                console.log(value + " success");
             },
             error: function (response) { console.log(response); }
         });

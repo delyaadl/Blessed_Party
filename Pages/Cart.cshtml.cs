@@ -62,8 +62,6 @@ namespace Blessed_Party.Pages
                 string province = "";
                 string city = "";
 
-
-
                 // get province
                 var client = new RestClient("https://api.rajaongkir.com/starter/province");
                 var request = new RestRequest(Method.GET);

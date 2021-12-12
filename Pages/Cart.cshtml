@@ -138,9 +138,9 @@
                     <div class="row">
                         <div class="col-sm-5">
                             <div class="number-input">
-                                <button style="height: 30px; width: 30px; font-size: 12pt; background-color: #ebebeb" onclick="this.parentNode.querySelector('input[type=number]').stepDown(); reCalculate($(this).next().val(), $('#total_@yy'), $('#price_@yy'));"></button>
+                                <button style="height: 30px; width: 30px; font-size: 12pt; background-color: #ebebeb" onclick="this.parentNode.querySelector('input[type=number]').stepDown(); changeQuantity($('#quantity_@yy').val(), @item.cart_id); reCalculate($(this).next().val(), $('#total_@yy'), $('#price_@yy'));"></button>
                                 <input style="height: 30px; width: 30px; font-weight:normal; font-size:12pt;" class="quantity" min="0" name="quantity" id="quantity_@yy" value="@item.quantity" type="number">
-                                <button style="height: 30px; width: 30px; font-size: 12pt; background-color: #ebebeb " onclick="this.parentNode.querySelector('input[type=number]').stepUp(); reCalculate($('#quantity_@yy').val(), $('#total_@yy'), $('#price_@yy'));" class="plus"></button>
+                                <button style="height: 30px; width: 30px; font-size: 12pt; background-color: #ebebeb " onclick="this.parentNode.querySelector('input[type=number]').stepUp(); changeQuantity($('#quantity_@yy').val(), @item.cart_id); reCalculate($('#quantity_@yy').val(), $('#total_@yy'), $('#price_@yy'));" class="plus"></button>
                             </div>
                         </div>
                         <div class="col">
@@ -292,5 +292,23 @@
     function deleteTable(cart_id) {
         $("#cart_id_delete").val(cart_id);
         $("#btnDelete").trigger("click");
+    }
+
+    function changeQuantity(quantity, cart_id) {
+        $.ajax({
+            type: "POST",
+            url: "/api/Index/changeQuantity",
+            data: '{cart_id: "' + cart_id + '", quantity: "' + quantity + '"}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                $(response.result).each(function () {
+                    var msg = this.msg;
+                    console.log(msg);
+                });
+
+            },
+            error: function (response) { console.log(response); }
+        });
     }
 </script>

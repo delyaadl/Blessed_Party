@@ -193,5 +193,33 @@ namespace Blessed_Party.Controllers
             }
             catch (Exception ex) { return JObject.Parse("{}"); }
         }
+
+        [HttpPost]
+        [Route("changeQuantity")]
+        public async Task<JObject> changeQuantity([FromBody] JObject variabel)
+        {
+            try
+            {
+                if (HttpContext.User.FindFirst("sUserID")?.Value == null || HttpContext.User.FindFirst("sUserID")?.Value == "")
+                {
+                    return JObject.Parse("{ result:[{\"msg\": \"Not Login\"}]}");
+                }
+                else
+                {
+                    tbl_cart res = _context.tbl_cart.Where(x => x.cart_id == int.Parse(variabel["cart_id"].ToString())).FirstOrDefault();
+
+                    res.quantity = int.Parse(variabel["quantity"].ToString());
+
+                    _context.Attach(res).State = EntityState.Modified;
+                    _context.Entry(res).Property(x => x.quantity).IsModified = true;
+                    await _context.SaveChangesAsync();
+                    return JObject.Parse("{ result:[{\"msg\": \"Berhasil\"}]}");
+                }
+            }
+            catch (Exception ex)
+            {
+                return JObject.Parse("{}");
+            }
+        }
     }
 }
