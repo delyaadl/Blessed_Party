@@ -173,7 +173,7 @@
                 <div class="col-sm-3">
                     <div class="number-input">
                         <button style="height: 30px; width: 30px; font-size: 12pt; background-color: #ebebeb" onclick="this.parentNode.querySelector('input[type=number]').stepDown(); reCalculate($(this).next().val(), $('#total_'), $('#price_'));"></button>
-                        <input style="height: 30px; width: 30px; font-weight:normal; font-size:12pt;" class="quantity" min="0" name="quantity" id="quantityValue" value="1" type="number">
+                        <input style="height: 30px; width: 30px; font-weight:normal; font-size:12pt;" class="quantity" min="1" name="quantity" id="quantityValue" value="1" type="number">
                         <button style="height: 30px; width: 30px; font-size: 12pt; background-color: #ebebeb " onclick="this.parentNode.querySelector('input[type=number]').stepUp(); reCalculate($('#quantity_').val(), $('#total_'), $('#price_'));" class="plus"></button>
                     </div>
                 </div>

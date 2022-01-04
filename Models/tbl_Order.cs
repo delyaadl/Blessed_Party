@@ -18,6 +18,7 @@ namespace Blessed_Party.Models
         public string order_status { get; set; }
 
         public string order_note { get; set; }
+        public string admin_note { get; set; }
 
         public string shipping_address { get; set; }
 

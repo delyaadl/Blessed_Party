@@ -12,11 +12,111 @@
                 <h4 style="font-weight:bold;">Alamat</h4>
             </div>
         </div>
-        <div class="row ml-1">
-            <div class="col">
-                <label class="monsterrat">@TempData["shipping_address"]</label>
-            </div>
-        </div>
+        @if (TempData["order_status"] != null)
+        {
+            @if (TempData["order_status"].ToString() == "0")
+            {
+                <div class="row ml-1">
+                    <div class="col">
+                        <div class="row mb-1">
+                            <div class="col">
+                                <input value="1" style="display:inline;" class="form-check-input mr-2" type="radio" name="alamat" id="alamat_sekarang" onchange="checkboxChange1(this);" checked>
+                                <label class="form-check-label" for="alamat_sekarang">Saya ingin menggunakan alamat yang ada</label>
+                            </div>
+                        </div>
+                        <div class="row mb-2" id="alamatSekarangDdl">
+                            <div class="col-sm-6">
+                                @{ string city = "";}
+                                @{ string province = "";}
+                                <select class="form-control" id="ddlAlamat" onchange="changeAddress(this);">
+                                    <option value="0" selected>@TempData["shipping_address"]</option>
+                                    @foreach (var item in Model.tbl_AddressList)
+                                    {
+                                        city = Model.cityViewList.Where(x => x.city_id == item.city_id).Select(x => x.city_name).FirstOrDefault();
+                                        province = Model.provinceViewList.Where(x => x.province_id == item.province_id).Select(x => x.province).FirstOrDefault();
+                                        <option value="@item.address_id">@item.user_fullname - @item.user_address, @city, @province @item.user_phone</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col">
+                                <input value="2" style="display:inline;" class="form-check-input mr-2" type="radio" name="alamat" id="alamat_baru" onchange="checkboxChange1(this);">
+                                <label class="form-check-label" for="alamat_baru">Saya ingin menggunakan alamat baru</label>
+                            </div>
+                        </div>
+                        <form>
+                            <input type="hidden" value="@int.Parse(HttpContext.User.FindFirst("sUserID")?.Value)" id="user_id" />
+                            <input type="hidden" value="@TempData["order_id"]" id="order_id" />
+                            <div class="row d-none" id="alamatBaruForm">
+                                <div class="col">
+                                    <div class="row mb-2">
+                                        <div class="col-sm-1">
+                                            <label>Nama <span style="color:red;">*</span></label>
+                                        </div>
+                                        <div class="col-sm-5">
+                                            <input type="text" class="form-control" id="userfullname" asp-for="tbl_AddressListAdd.user_fullname" placeholder="Nama Lengkap" required>
+                                        </div>
+                                        <div class="col-sm-1">
+                                            <label>No. Telp <span style="color:red">*</span></label>
+                                        </div>
+                                        <div class="col-sm-5">
+                                            <input type="number" class="form-control" id="userphone" asp-for="tbl_AddressListAdd.user_phone" placeholder="No. Telp" required>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-sm-1">
+                                            <label class="mr-2" style=" display: inline;">Alamat <span style="color:red">*</span></label>
+                                        </div>
+                                        <div class="col-sm-5">
+                                            <textarea type="text" class="form-control" id="useraddress" asp-for="tbl_AddressListAdd.user_address" placeholder="Alamat" required></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-sm-1">
+                                            <label class="mr-2" style=" display: inline;">Kota <span style="color:red">*</span></label>
+                                        </div>
+                                        <div class="col-sm-5">
+                                            <select class="form-control" style="border-color:gainsboro;" id="usercity" asp-for="tbl_AddressListAdd.city_id">
+                                                @foreach (var item in Model.cityViewList)
+                                                {
+                                                    <option value="@item.city_id">@item.city_name</option>
+                                                }
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-1">
+                                            <label class="mr-2" style=" display: inline;">Provinsi <span style="color:red">*</span></label>
+                                        </div>
+                                        <div class="col-sm-5">
+                                            <select class="form-control" style="border-color:gainsboro;" id="userprovince" asp-for="tbl_AddressListAdd.province_id">
+                                                @foreach (var item in Model.provinceViewList)
+                                                {
+                                                    <option value="@item.province_id">@item.province</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col float-right">
+                                            <button onclick="saveAddress();" type="button" class="btn btn-success float-right">Simpan Alamat</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="row ml-1">
+                    <div class="col">
+                        <label>@TempData["shipping_address"]</label>
+                    </div>
+                </div>
+            }
+        }
+
 
         <div class="row m-1 mt-4 border-bottom pb-2 pr-0 pl-0 mb-4">
             <div class="col p-0">
@@ -126,13 +226,14 @@
         <input type="hidden" id="subtotal" value="@subtotal" />
 
         <form id="modal-order" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="address_id" id="address_id" />
             <div class="row mt-2">
                 <div class="col">
                     <label style="font-weight:bold" class="border-bottom pb-2 mb-2">Pilih Jenis Pengiriman</label>
                 </div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" id="pilihPengiriman">
                 @{ int counter = 1;}
                 @{ string firstVal = "";}
                 @{ decimal firstShip = 0;}
@@ -149,7 +250,7 @@
                                     <input type="hidden" value="@item.value" id="value_@counter" />
                                     <input type="hidden" value="@item.service" id="service_@counter" />
                                     <input class="form-check-input" type="radio" name="shipping" id="shipping_@counter" onchange="checkboxChange(this);" checked>
-                                    <label class="form-check-label" for="gridCheck1"><span class="font-weight-bold">JNE @item.service</span> - Rp @item.value.ToString("N2", CultureInfo.CreateSpecificCulture("en-US"))</label>
+                                    <label class="form-check-label" for="gridCheck1"><span class="font-weight-bold">JNE @item.service</span> - Rp @item.value.ToString("N2", CultureInfo.CreateSpecificCulture("en-US")) (estimasi @item.etd hari)</label>
                                 </div>
                             }
                             else
@@ -158,7 +259,7 @@
                                     <input type="hidden" value="@item.value" id="value_@counter" />
                                     <input type="hidden" value="@item.service" id="value_@counter" />
                                     <input class="form-check-input" type="radio" name="shipping" id="shipping_@counter" onchange="checkboxChange(this);">
-                                    <label class="form-check-label" for="gridCheck1"><span class="font-weight-bold">JNE @item.service</span> - Rp @item.value.ToString("N2", CultureInfo.CreateSpecificCulture("en-US"))</label>
+                                    <label class="form-check-label" for="gridCheck1"><span class="font-weight-bold">JNE @item.service</span> - Rp @item.value.ToString("N2", CultureInfo.CreateSpecificCulture("en-US")) (estimasi @item.etd hari)</label>
                                 </div>
                             }
 
@@ -171,14 +272,14 @@
                 {
                     <div class="row">
                         <div class="col">
-                            <label>JNE @TempData["service"] - Rp @decimal.Parse(TempData["shipping_value"].ToString()).ToString("N2", CultureInfo.CreateSpecificCulture("en-US"))</label>
+                            <label>JNE @TempData["service"] - Rp @decimal.Parse(TempData["shipping_value"].ToString()).ToString("N2", CultureInfo.CreateSpecificCulture("en-US")) (estimasi @TempData["etd"] hari)</label>
                         </div>
                     </div>
                 }
-                <input type="hidden" id="shipping_srv" value="@firstVal" name="shipping_srv" />
-                <input type="hidden" id="shipping_val" value="@firstShip" name="shipping_val" />
 
             </div>
+            <input type="hidden" id="shipping_srv" value="@firstVal" name="shipping_srv" />
+            <input type="hidden" id="shipping_val" value="@firstShip" name="shipping_val" />
             <div class="row mt-2">
                 <div class="col">
                     <label style="font-weight:bold">Tambahkan Catatan</label>
@@ -250,7 +351,7 @@
                     }
                     else if (int.Parse(TempData["order_status"].ToString()) > 0 && int.Parse(TempData["order_status"].ToString()) < 3)
                     {
-                        <label style="color:green;">Anda sudah mengupload bukti pembayaran. Silakan tunggu proses selanjutnya.</label>
+                        <label style="color:green;">Anda sudah mengupload bukti pembayaran, silakan reupload jika terjadi kesalahan / tunggu proses selanjutnya jika sudah sesuai.</label>
                     }
                     else
                     {
@@ -260,10 +361,23 @@
             </div>
             <input type="hidden" id="weight" name="weight" value="@TempData["weight"]" />
 
-            @if(int.Parse(TempData["order_status"].ToString()) > 0 && int.Parse(TempData["order_status"].ToString()) < 4)
+            @if (int.Parse(TempData["order_status"].ToString()) > 0 && int.Parse(TempData["order_status"].ToString()) < 4)
             {
                 <div class="row">
                     <div class="col">
+                        @if (int.Parse(TempData["order_status"].ToString()) < 2)
+                        {
+                            <input class="form-control p-0" style="border:none; width:90px; color:transparent; display:inline" id="proof_of_payment_2" type="file" name="proof_of_payment_2" accept=".png,.jpg,.jpeg" onchange="Pressed()" />
+                            @if (TempData["fileUpload"].ToString() != "")
+                            {
+                                <label style="display:inline;" id="fileLabel" class="mr-2">@TempData["fileUpload"]</label>
+                            }
+                            else
+                            {
+                                <label style="display:inline;" id="fileLabel" class="mr-2">Upload ulang bukti pembayaran</label>
+                            }
+                            <input style="display:inline" type="submit" asp-page-handler="Reupload" class="btn-secondary btn mr-2" value="re-upload" />
+                        }
                         <input style="display:inline" type="submit" asp-page-handler="Terima" class="btn-success btn mr-2" value="Pesanan Diterima" />
                     </div>
                 </div>
@@ -271,24 +385,33 @@
         </form>
     </div>
 </div>
+<input type="hidden" id="order_status" value="@TempData["order_status"]" />
+<input type="hidden" id="service" value="@TempData["service"]" />
+<input type="hidden" id="valship" value="@TempData["shipping_val"]" />
+<input type="hidden" id="etd" value="@TempData["etd"]" />
+<input type="hidden" id="shipping_address" value="@TempData["shipping_address"]" />
+<input type="hidden" id="address_id_id" />
 
 <script>
     $(function () {
         console.log($("#shipping_srv").val());
         console.log($("#shipping_val").val());
+        $("#address_id").val($("#ddlAlamat").val());
     });
 
     function checkboxChange(checkbox_element) {
         if (checkbox_element.checked) {
             console.log("checked");
-            $("#shipping_srv").val($(checkbox_element).prev().val());
-            $("#shipping_val").val($(checkbox_element).prev().prev().val());
+            var x = $(checkbox_element).prev().val();
+            var y = $(checkbox_element).prev().prev().val();
+            $("#shipping_srv").val(x);
+            $("#shipping_val").val(y);
             console.log($("#shipping_srv").val());
             console.log($("#shipping_val").val());
 
             var pengiriman = $("#shipping_val").val();
             var subtotal = $("#subtotal").val();
-            var jumlah = parseInt(pengiriman) + parseInt(subtotal) ;
+            var jumlah = parseInt(pengiriman) + parseInt(subtotal);
 
             $("#shipping_text").text("Rp " + Intl.NumberFormat('en-US', { minimumFractionDigits: 2 }).format($("#shipping_val").val()));
             $("#jumlah_text").text("Rp " + Intl.NumberFormat('en-US', { minimumFractionDigits: 2 }).format(jumlah));
@@ -307,5 +430,199 @@
             var theSplit = a.value.split('\\');
             fileLabel.innerHTML = theSplit[theSplit.length - 1];
         }
+    }
+
+    function checkboxChange1(element) {
+        if ($(element).val() == 1) {
+            $("#alamatSekarangDdl").removeClass("d-none");
+            $("#alamatBaruForm").addClass("d-none");
+        } else {
+            $("#alamatBaruForm").removeClass("d-none");
+            $("#alamatSekarangDdl").addClass("d-none");
+        }
+    }
+
+    function saveAddress() {
+        var alamat_sekarang = "";
+        $("#pilihPengiriman").empty();
+        $.ajax({
+            type: "POST",
+            url: "/api/OrderAndPayment/saveAddress",
+            data: '{user_id: "' + $("#user_id").val() + '", order_id: "' + $("#order_id").val() + '", name: "' + $("#userfullname").val() + '", phone: "' + $("#userphone").val() + '", address: "' + $("#useraddress").val() + '", city: "' + $("#usercity").val() + '", province: "' + $("#userprovince").val() + '"}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                console.log(response);
+                var counter = 1;
+                var firstVal = "";
+                var firstShip = 0;
+                var rowAppend = '<div class="row ml-1">';
+                $(response.result).each(function () {
+                    console.log(response.result);
+                    var msg = this.msg;
+                    console.log(msg);
+                    if (msg.includes("Not")) {
+                        window.location.href = '/Login';
+                    } else {
+                        if ($("#order_status").val() == "0") {
+                            console.log("0");
+                            if (counter == 1) {
+                                console.log("address _ id " + this.address_id);
+                                $("#address_id_id").val(this.address_id);
+                                firstVal = this.shipping_srv;
+                                firstShip = this.shipping_val;
+                                console.log(firstVal);
+                                console.log(firstShip);
+
+                                rowAppend = rowAppend + '<div class="form-group form-check col-sm-3">' +
+                                    '<input type="hidden" value="' + this.shipping_val + '" id="value_' + counter + '" />' +
+                                    '<input type="hidden" value="' + this.shipping_srv + '" id="service_' + counter + '" />' +
+                                    '<input class="form-check-input" type="radio" name="shipping" id="shipping_' + counter + '" onchange="checkboxChange(this);" checked>' +
+                                    '<label class="form-check-label" for="gridCheck1"><span class="font-weight-bold">JNE' + this.shipping_srv + '</span> - Rp ' + Intl.NumberFormat('en-US', { minimumFractionDigits: 2 }).format(this.shipping_val) + ' (estimasi ' + this.etd + ' hari)</label>' +
+                                    '</div>';
+                            }
+                            else {
+                                rowAppend = rowAppend + '<div class="form-group form-check col-sm-3">' +
+                                    '<input type="hidden" value="' + this.shipping_val + '" id="value_' + counter + '" />' +
+                                    '<input type="hidden" value="' + this.shipping_srv + '" id="service_' + counter + '" />' +
+                                    '<input class="form-check-input" type="radio" name="shipping" id="shipping_' + counter + '" onchange="checkboxChange(this);">' +
+                                    '<label class="form-check-label" for="gridCheck1"><span class="font-weight-bold">JNE' + this.shipping_srv + '</span> - Rp ' + Intl.NumberFormat('en-US', { minimumFractionDigits: 2 }).format(this.shipping_val) + ' (estimasi ' + this.etd + ' hari)</label>' +
+                                    '</div > ';
+                            }
+                            counter++;
+
+                            rowAppend = rowAppend + '</div>';
+                        }
+                        else {
+                            console.log("1");
+                            rowAppend = rowAppend + '<div class="row">' +
+                                '<div class="col">' +
+                                '<label>JNE ' + $("#service").val() + ' - Rp' + Intl.NumberFormat('en-US', { minimumFractionDigits: 2 }).format($("#valship").val()) + ' (estimasi ' + $("#etd").val() + ' hari)</label>' +
+                                '</div>' +
+                                '</div>';
+                            return false;
+                        }
+                    }
+                });
+
+                $("#shipping_srv").val(firstVal);
+                $("#shipping_val").val(firstShip);
+                $("#pilihPengiriman").append(rowAppend);
+
+                var pengiriman = $("#shipping_val").val();
+                var subtotal = $("#subtotal").val();
+                var jumlah = parseInt(pengiriman) + parseInt(subtotal);
+
+                $("#shipping_text").text("Rp " + Intl.NumberFormat('en-US', { minimumFractionDigits: 2 }).format($("#shipping_val").val()));
+                $("#jumlah_text").text("Rp " + Intl.NumberFormat('en-US', { minimumFractionDigits: 2 }).format(jumlah));
+            },
+            error: function (response) { console.log(response); }
+        });
+
+        console.log("alamatt  " + alamat_sekarang);
+        $("#ddlAlamat").empty();
+        $("#ddlAlamat").append('<option value="0" selected>' + $("#shipping_address").val() + '</option>');
+        $.ajax({
+            type: "POST",
+            url: "/api/OrderAndPayment/loadDdlAddress",
+            data: '{user_id: "' + $("#user_id").val() + '", order_id: "' + $("#order_id").val() + '"}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                console.log(response);
+                var counter = 1;
+                var firstVal = "";
+                var firstShip = 0;
+                var rowAppend = '';
+                $(response.result).each(function () {
+                    rowAppend = rowAppend + '<option value ="' + this.address_id + '">' + this.name + ' - ' + this.address + ', ' + this.city + ', ' + this.province + '</option>';
+                });
+                $("#ddlAlamat").append(rowAppend);
+
+                if ($("#address_id_id").val() != null && $("#address_id_id").val() != "") {
+                    console.log($("#ddlAlamat").val());
+                    $("#ddlAlamat").val($("#address_id_id").val());
+                    $("#address_id").val($("#ddlAlamat").val());
+                    console.log("sekarang " + $("#ddlAlamat").val());
+                }
+            },
+            error: function (response) { console.log(response); }
+        });
+    }
+
+    function changeAddress(element) {
+        $("#pilihPengiriman").empty();
+        $.ajax({
+            type: "POST",
+            url: "/api/OrderAndPayment/changeAddress",
+            data: '{user_id: "' + $("#user_id").val() + '", order_id: "' + $("#order_id").val() + '", address_id: "' + $("#ddlAlamat").val() + '"}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                console.log(response);
+                var counter = 1;
+                var firstVal = "";
+                var firstShip = 0;
+                var rowAppend = '<div class="row ml-1">';
+                $(response.result).each(function () {
+                    console.log(response.result);
+                    var msg = this.msg;
+                    console.log(msg);
+                    if (msg.includes("Not")) {
+                        window.location.href = '/Login';
+                    } else {
+                        if ($("#order_status").val() == "0") {
+                            console.log("0");
+                            if (counter == 1) {
+                                firstVal = this.shipping_srv;
+                                firstShip = this.shipping_val;
+                                console.log(firstVal);
+                                console.log(firstShip);
+
+                                rowAppend = rowAppend + '<div class="form-group form-check col-sm-3">' +
+                                    '<input type="hidden" value="' + this.shipping_val + '" id="value_' + counter + '" />' +
+                                    '<input type="hidden" value="' + this.shipping_srv + '" id="service_' + counter + '" />' +
+                                    '<input class="form-check-input" type="radio" name="shipping" id="shipping_' + counter + '" onchange="checkboxChange(this);" checked>' +
+                                    '<label class="form-check-label" for="gridCheck1"><span class="font-weight-bold">JNE' + this.shipping_srv + '</span> - Rp ' + Intl.NumberFormat('en-US', { minimumFractionDigits: 2 }).format(this.shipping_val) + ' (estimasi ' + this.etd + ' hari)</label>' +
+                                    '</div>';
+                            }
+                            else {
+                                rowAppend = rowAppend + '<div class="form-group form-check col-sm-3">' +
+                                    '<input type="hidden" value="' + this.shipping_val + '" id="value_' + counter + '" />' +
+                                    '<input type="hidden" value="' + this.shipping_srv + '" id="service_' + counter + '" />' +
+                                    '<input class="form-check-input" type="radio" name="shipping" id="shipping_' + counter + '" onchange="checkboxChange(this);">' +
+                                    '<label class="form-check-label" for="gridCheck1"><span class="font-weight-bold">JNE' + this.shipping_srv + '</span> - Rp ' + Intl.NumberFormat('en-US', { minimumFractionDigits: 2 }).format(this.shipping_val) + ' (estimasi ' + this.etd + ' hari)</label>' +
+                                    '</div > ';
+                            }
+                            counter++;
+
+                            rowAppend = rowAppend + '</div>';
+                        }
+                        else {
+                            console.log("1");
+                            rowAppend = rowAppend + '<div class="row">' +
+                                '<div class="col">' +
+                                '<label>JNE ' + $("#service").val() + ' - Rp' + Intl.NumberFormat('en-US', { minimumFractionDigits: 2 }).format($("#valship").val()) + ' (estimasi ' + $("#etd").val() + ' hari)</label>' +
+                                '</div>' +
+                                '</div>';
+                            return false;
+                        }
+                    }
+                });
+
+                $("#shipping_srv").val(firstVal);
+                $("#shipping_val").val(firstShip);
+                $("#pilihPengiriman").append(rowAppend);
+
+                var pengiriman = $("#shipping_val").val();
+                var subtotal = $("#subtotal").val();
+                var jumlah = parseInt(pengiriman) + parseInt(subtotal);
+
+                $("#shipping_text").text("Rp " + Intl.NumberFormat('en-US', { minimumFractionDigits: 2 }).format($("#shipping_val").val()));
+                $("#jumlah_text").text("Rp " + Intl.NumberFormat('en-US', { minimumFractionDigits: 2 }).format(jumlah));
+                $("#address_id").val($(element).val());
+            },
+            error: function (response) { console.log(response); }
+        });
     }
 </script>

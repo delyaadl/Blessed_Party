@@ -31,7 +31,6 @@
                         <th class="d-none">Order Detail ID</th>
                         <th class="d-none">Order ID</th>
                         <th>Product</th>
-                        <th>Product Image</th>
                         <th>Price</th>
                         <th>Quantity</th>
                         <th>Total</th>
@@ -45,16 +44,6 @@
                     <tr>
                         <td class="d-none">@item.dtl_order_id</td>
                         <td class="d-none">@item.order_id</td>
-                        <td>
-                            @foreach (var x in Model.tbl_Product)
-                            {
-                                if (item.product_id == x.product_id)
-                                {
-                                    <label>@x.product_name</label>
-                                    break;
-                                }
-                            }
-                        </td>
                         <td>
                             @foreach (var x in Model.tbl_Product)
                             {

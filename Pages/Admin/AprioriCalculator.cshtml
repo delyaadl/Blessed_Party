@@ -1,0 +1,52 @@
+﻿@page
+@model Blessed_Party.Pages.Admin.AprioriCalculatorModel
+@{
+}
+
+<div id="changePassword-container">
+    <form id="apriori-page" asp-page-handler="SetApriori" method="post" class="m-5">
+
+
+        <div class="row">
+            <div class="col">
+                <label style="font-weight:bold; font-size:24pt;">Set Apriori Input</label>
+            </div>
+        </div>
+
+        @if (TempData["Message"] != null)
+        {
+            <div class="row">
+                <div class="col-lg-12">
+                    <label style="color:red">@TempData["Message"]</label>
+                </div>
+            </div>
+        }
+
+    <div class="row mt-3">
+        <div class="col-sm-6">
+            <label>Minimum Support</label>
+            <input class="form-control" type="number" id="minsup" name="minsup" step="any" required placeholder="Insert minimum support" min="1"/>
+        </div>
+        <div class="col-sm-6">
+            <label>Minimum Confidence</label>
+            <input class="form-control" type="number" id="minconf" name="minconf" step="any" required placeholder="Insert minimum confidence" min="0.01" max="1"/>
+        </div>
+    </div>
+        
+    <div class="row mt-3">
+        <div class="col-sm-6">
+            <label>Start Date Transaction</label>
+            <input class="form-control" type="date" id="start_date" name="start_date" />
+        </div>
+        <div class="col-sm-6">
+            <label>End Date Transaction</label>
+            <input class="form-control" type="date" id="end_date" name="end_date" />
+        </div>
+    </div>
+        <div class="row mt-3">
+            <div class="col">
+                <input type="submit" value="Set Apriori Input" class="btn btn-success text-white" />
+            </div>
+        </div>
+    </form>
+</div>

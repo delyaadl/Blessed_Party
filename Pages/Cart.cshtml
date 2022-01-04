@@ -139,7 +139,7 @@
                         <div class="col-sm-5">
                             <div class="number-input">
                                 <button style="height: 30px; width: 30px; font-size: 12pt; background-color: #ebebeb" onclick="this.parentNode.querySelector('input[type=number]').stepDown(); changeQuantity($('#quantity_@yy').val(), @item.cart_id); reCalculate($(this).next().val(), $('#total_@yy'), $('#price_@yy'));"></button>
-                                <input style="height: 30px; width: 30px; font-weight:normal; font-size:12pt;" class="quantity" min="0" name="quantity" id="quantity_@yy" value="@item.quantity" type="number">
+                                <input style="height: 30px; width: 30px; font-weight:normal; font-size:12pt;" class="quantity" min="1" name="quantity" id="quantity_@yy" value="@item.quantity" type="number">
                                 <button style="height: 30px; width: 30px; font-size: 12pt; background-color: #ebebeb " onclick="this.parentNode.querySelector('input[type=number]').stepUp(); changeQuantity($('#quantity_@yy').val(), @item.cart_id); reCalculate($('#quantity_@yy').val(), $('#total_@yy'), $('#price_@yy'));" class="plus"></button>
                             </div>
                         </div>

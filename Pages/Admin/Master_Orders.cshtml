@@ -17,13 +17,6 @@
             <div class="col float-left">
                 <h1 class="bd-title montserrat font-weight-bold mb-2" id="content"> Master - Orders</h1>
             </div>
-            @*<div class="col-sm-3 float-right">
-                <form class="d-none" id="modal-download" asp-page-handler="Download"></form>
-                <div class="float-lg-right">
-                    <input type="submit" form="modal-download" class="btn btn-secondary text-white mr-1" value="Download Template" />
-                    <button type="button" class="btn btn-secondary text-white" data-toggle="modal" data-target="#ModalImport">Import Rating Data</button>
-                </div>
-            </div>*@
         </div> <!-- card-title -->
         <div class="row">
             <div class="col">
@@ -83,6 +76,10 @@
                                 {
                                     <label>Pesanan Selesai</label>
                                 }
+                                else if (item.order_status == "5")
+                                {
+                                    <label>Pesanan Bermasalah</label>
+                                }
                                 else if (item.order_status == "9")
                                 {
                                     <label>Pesanan Dibatalkan</label>
@@ -137,6 +134,7 @@
                                     <option value="2">Pesanan Dikirim</option>
                                     <option value="3">Pesanan Diterima</option>
                                     <option value="4">Pesanan Selesai</option>
+                                    <option value="5">Pesanan Bermasalah</option>
                                     <option value="9">Pesanan Dibatalkan</option>
                                 </select>
                             </div>
@@ -144,6 +142,11 @@
                             <div class="mt-3" id="resiDiv">
                                 <label>Nomor Resi</label>
                                 <input class="form-control mr-2" type="text" id="resiEdit" asp-for="shipment_Add.shipment_awb" placeholder="Masukkan Resi..." />
+                            </div>
+
+                            <div class="mt-3" id="notesDiv">
+                                <label>Catatan Penjual</label>
+                                <textarea class="form-control mr-2" type="text" id="notesAdmin" asp-for="tbl_Order_Edit.admin_note" placeholder="Tulis catatan..."></textarea>
                             </div>
                         </form>
                     </div>
@@ -219,6 +222,7 @@
         $("#hdnOrderId").val(item_row["order_id"]);
         $("#hdnCreatedAt").val(item_row["order_date"]);
         $("#statusEdit").val(item_row["order_status"]);
+        $("#notesAdmin").val(item_row["admin_note"]);
 
         var order_status = item_row["order_status"];
         var proof = item_row["proof_of_payment"];

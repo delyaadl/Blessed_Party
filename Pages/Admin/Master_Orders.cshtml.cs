@@ -9,6 +9,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
+using System.Net.Mail;
+using Google.Apis.Gmail.v1;
+using Google.Apis.Gmail.v1.Data;
+using System.Configuration;
+using System.Net;
 
 namespace Blessed_Party.Pages.Admin
 {
@@ -73,6 +78,36 @@ namespace Blessed_Party.Pages.Admin
 
             tbl_Order check1 = _context.tbl_Order.Where(x => x.order_id == tbl_Order_Edit.order_id).FirstOrDefault();
 
+            if(int.Parse(tbl_Order_Edit.order_status) == 5)
+            {
+                if(tbl_Order_Edit.admin_note == null)
+                {
+                    TempData["Message"] = "Silakan tulis detail masalah terlebih dahulu.";
+                    return RedirectToPage();
+                } else
+                {
+                    tbl_Order res = _context.tbl_Order.Where(x => x.order_id == tbl_Order_Edit.order_id).FirstOrDefault();
+
+                    if (res.order_status != "2" && res.order_status != "3" && res.order_status != "4" && res.order_status != "9")
+                    {
+                        res.order_status = tbl_Order_Edit.order_status;
+                        res.admin_note = tbl_Order_Edit.admin_note;
+                        _context.Attach(res).State = EntityState.Modified;
+                        _context.Entry(res).Property(x => x.admin_note).IsModified = true;
+                        _context.Entry(res).Property(x => x.order_status).IsModified = true;
+
+                        await _context.SaveChangesAsync();
+                        sendEmail(res.admin_note);
+                        TempData["Message"] = "Informasi telah dikirim ke customer.";
+                        return RedirectToPage();
+                    } else
+                    {
+                        TempData["Message"] = "Pesanan sudah dalam proses pengiriman / selesai / dibatalkan.";
+                        return RedirectToPage();
+                    }
+                }
+            }
+
             if (int.Parse(tbl_Order_Edit.order_status) == 9)
             {
                 if (check1.order_status != "0")
@@ -82,9 +117,37 @@ namespace Blessed_Party.Pages.Admin
                 }
                 else
                 {
+                    tbl_Shipment ship = _context.tbl_Shipment.Where(x => x.order_id == tbl_Order_Edit.order_id).FirstOrDefault();
+
+                    if (ship != null)
+                    {
+                        ship.shipment_cost = 0;
+                        ship.shipment_type = "-";
+                        ship.shipment_weight = 0;
+
+                        _context.Attach(ship).State = EntityState.Modified;
+                        _context.Entry(ship).Property(x => x.shipment_weight).IsModified = true;
+                        _context.Entry(ship).Property(x => x.shipment_type).IsModified = true;
+                        _context.Entry(ship).Property(x => x.shipment_cost).IsModified = true;
+
+                        await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        tbl_Shipment newship = new tbl_Shipment();
+                        newship.order_id = tbl_Order_Edit.order_id;
+                        newship.shipment_cost = 0;
+                        newship.shipment_type = "-";
+                        newship.shipment_weight = 0;
+
+                        _context.tbl_Shipment.Add(newship);
+                        await _context.SaveChangesAsync();
+                    }
+
                     tbl_Order res = _context.tbl_Order.Where(x => x.order_id == tbl_Order_Edit.order_id).FirstOrDefault();
                     if (res != null)
                     {
+                        res.admin_note = "";
                         res.order_finish_date = DateTime.Now;
                         res.order_status = tbl_Order_Edit.order_status;
                         _context.Attach(res).State = EntityState.Modified;
@@ -149,6 +212,7 @@ namespace Blessed_Party.Pages.Admin
                         res.order_finish_date = DateTime.Now;
                     }
 
+                    res.admin_note = "";
                     res.order_status = tbl_Order_Edit.order_status;
                     _context.Attach(res).State = EntityState.Modified;
 
@@ -190,12 +254,6 @@ namespace Blessed_Party.Pages.Admin
             }
             memory.Position = 0;
             return File(memory, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", Path.GetFileName(path));
-
-            ////Read the File data into Byte Array.
-            //byte[] bytes = System.IO.File.ReadAllBytes(path);
-
-            ////Send the File to Download.
-            //return File(bytes, "application/octet-stream", "Template Risk Identification.xlsx");
         }
 
         public async Task<IActionResult> OnPostUploadFile(IFormFile fileSelect)
@@ -290,5 +348,67 @@ namespace Blessed_Party.Pages.Admin
             }
 
         }
+
+        protected void sendEmail(string textEmail)
+        {
+            try
+            {
+                //Fetching Settings from WEB.CONFIG file.  
+                string emailSender = "theyale.id@gmail.com";
+                string emailSenderPassword = "liacantik11";
+                string emailSenderHost = "smtp.gmail.com";
+                int emailSenderPort = 587;
+                bool emailIsSSL = true;
+
+
+                string subject = "Pesanan Anda Bermasalah.";
+
+                //Base class for sending email  
+                MailMessage _mailmsg = new MailMessage();
+
+                //Make TRUE because our body text is html  
+                _mailmsg.IsBodyHtml = true;
+
+                //Set From Email ID  
+                _mailmsg.From = new MailAddress(emailSender);
+
+                //Set To Email ID  
+                _mailmsg.To.Add("delyatjung@gmail.com");
+
+                //Set Subject  
+                _mailmsg.Subject = subject;
+
+                string bodyMess = "<p>Pesanan anda bermasalah. berikut adalah catatan dari penjual :<br/>" + textEmail + "</p>";
+                //Set Body Text of Email   
+                _mailmsg.Body = bodyMess;
+
+
+                //Now set your SMTP   
+                SmtpClient _smtp = new SmtpClient();
+
+                //Set HOST server SMTP detail  
+                _smtp.Host = emailSenderHost;
+
+                //Set PORT number of SMTP  
+                _smtp.Port = emailSenderPort;
+
+                //Set SSL --> True / False  
+                _smtp.EnableSsl = emailIsSSL;
+
+                //Set Sender UserEmailID, Password  
+                NetworkCredential _network = new NetworkCredential(emailSender, emailSenderPassword);
+                _smtp.Credentials = _network;
+
+                //Send Method will send your MailMessage create above.  
+                _smtp.Send(_mailmsg);
+
+            }
+            catch (Exception ex)
+            {
+                string x = "Message not send";
+            }
+            
+        }
+
     }
 }

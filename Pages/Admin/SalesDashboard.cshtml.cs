@@ -72,7 +72,7 @@ namespace Blessed_Party.Pages.Admin
             var lstModel = new List<SalesDashboard>();
             var userModel = new List<UserDashboard>();
             var today = DateTime.Now;
-            var max = new DateTime(today.Year, 12, 1); // first of this month
+            var max = new DateTime(today.Year, today.Month, today.Day); // first of this month
             var min = max.AddMonths(-1); // first of last month
             TempData["lastMonth"] = min.ToString("MMMM");
 

@@ -28,6 +28,7 @@ namespace Blessed_Party.Pages
         }
 
         public IList<tbl_User> tbl_User { get; set; }
+        public IList<tbl_AddressList> tbl_AddressList { get; set; }
         public IList<provinceView> provinceViewList { get; set; }
         public IList<cityView> cityViewList { get; set; }
 

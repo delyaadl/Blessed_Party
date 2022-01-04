@@ -110,7 +110,7 @@ namespace Blessed_Party.Pages
                     order_Add.order_status = "0";
                     order_Add.order_date = DateTime.Now;
                     order_Add.user_id = userid;
-                    order_Add.shipping_address = user.user_address + ", " + city + ", " + province;
+                    order_Add.shipping_address = user.user_fullname + " - " + user.user_address + ", " + city + ", " + province + " " + user.user_phone;
 
                     _context.tbl_Order.Add(order_Add);
                     await _context.SaveChangesAsync();

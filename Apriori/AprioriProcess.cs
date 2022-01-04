@@ -21,9 +21,30 @@ namespace Blessed_Party.Apriori
         // membuat list transaksi yang isinya array dari tiap index produk dalam transaksi yang sama
         public async Task<List<int[]>> CreateTransactions()
         {
+            apriori_input_tbl res = _context.apriori_input_tbl.FirstOrDefault();
+
+            List<int> orderIDs = new List<int>();
             List<int> allproducts = await ListAllProducts();
 
-            List<int> orderIDs = await _context.tbl_Order.Select(x => x.order_id).ToListAsync();
+            if (res != null)
+            {
+                if (res.start_date != null && res.end_date != null)
+                {
+                    orderIDs = await _context.tbl_Order.Where(x => x.order_date >= res.start_date && x.order_date <= res.end_date).Select(x => x.order_id).ToListAsync();
+                } else if(res.start_date != null && res.end_date == null)
+                {
+                    orderIDs = await _context.tbl_Order.Where(x => x.order_date >= res.start_date).Select(x => x.order_id).ToListAsync();
+                } else if(res.start_date == null && res.end_date != null)
+                {
+                    orderIDs = await _context.tbl_Order.Where(x => x.order_date <= res.end_date).Select(x => x.order_id).ToListAsync();
+                } else
+                {
+                    orderIDs = await _context.tbl_Order.Select(x => x.order_id).ToListAsync();
+                }
+            } else
+            {
+                orderIDs = await _context.tbl_Order.Select(x => x.order_id).ToListAsync();
+            }
 
             int[] product;
 
@@ -66,9 +87,16 @@ namespace Blessed_Party.Apriori
         // step 2
         public List<AdvicedProduct2> DoApriori(List<int> productids, List<int> allproducts, int N, List<int[]> transactionindex)
         {
+            apriori_input_tbl res = _context.apriori_input_tbl.FirstOrDefault();
             //int minSupport = 6; // inisiasi min sup
             int minSupport = 10; // inisiasi min sup
             double minConfidence = 0.75; // minimum confidence
+
+            if(res != null)
+            {
+                minSupport = int.Parse(res.minimum_support.ToString().Split(".")[0]);
+                minConfidence = double.Parse(res.minimum_confidence.ToString());
+            }
 
             // cari frequent itemsets yang memenuhi minimum support, minimal 2, maksimal 3 item
             List<ItemSet> frequentItemSets = Apriori.GetFrequentItemSets(N, transactionindex, minSupport);

@@ -15,6 +15,9 @@ namespace Blessed_Party.Data
         }
 
         public DbSet<tbl_User> tbl_User { get; set; }
+        public DbSet<tbl_AddressList> tbl_AddressList { get; set; }
+        public DbSet<apriori_input_tbl> apriori_input_tbl { get; set; }
+        public DbSet<ForgetPassword> ForgetPassword { get; set; }
         public DbSet<tbl_Product> tbl_Product { get; set; }
         public DbSet<tbl_Category> tbl_Category { get; set; }
         public DbSet<tbl_cart> tbl_cart { get; set; }
